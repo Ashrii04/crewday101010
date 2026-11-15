@@ -48,3 +48,4 @@ dist-noenv
 
 # Signed release bundle: shared separately, not in git
 playstore/*.aab
+.vercel
