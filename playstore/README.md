@@ -20,22 +20,22 @@ The app icon (512×512) is `public/icons/icon-512.png` in the repo root.
 Google Play requires new apps and updates to target **Android 16 (API level 36)** (deadline 31 August 2026; the 1 November 2026 extension has also passed). The bundle first built for this folder targeted API 35, so Play Console would probably reject it. `android/twa-manifest.json` now says `targetSdkVersion: 36`; rebuild with the same upload keystore:
 
 1. `bubblewrap update` (regenerates the Android project from the manifest), then `bubblewrap build`.
+   This rebuild also matters because the **site address changed** to `rooman-books.momsmagic.shop`: the host is baked into the app, so a bundle built earlier still points at the old `crewday101010mm.vercel.app` address and must not be uploaded.
 2. If your Bubblewrap version cannot target API 36, upgrade it (`npm i -g @bubblewrap/cli`) and retry. If it still cannot, ship the Capacitor build instead (see the Android section of the root README), which already targets API 36.
 3. Check the result before uploading: open the `.aab` in Android Studio (Build > Analyze APK) or run `bundletool dump manifest` and confirm `targetSdkVersion` is 36.
 
 Check Google's current requirement before you upload: <https://support.google.com/googleplay/android-developer/answer/11926878>.
 
 ## Step 1: Deploy the website (needed for full-screen Android mode)
-The repo changes (`public/manifest.json`, `public/icons/`, `public/.well-known/assetlinks.json`, `vercel.json`) must go live on `https://crewday101010mm.vercel.app`. Until then the app still works but shows a browser address bar.
+The repo changes (`public/manifest.json`, `public/icons/`, `public/.well-known/assetlinks.json`, `vercel.json`) must go live on `https://rooman-books.momsmagic.shop`. Until then the app still works but shows a browser address bar.
 
-- Merge the PR into `main`, or deploy from the `play-store-setup` branch. Vercel should build it automatically if the project is connected to git.
-- Or from a terminal: `npx vercel login` then `npx vercel --prod`.
-- Check: `https://crewday101010mm.vercel.app/manifest.json` and `https://crewday101010mm.vercel.app/.well-known/assetlinks.json` should return JSON, not HTML.
+- The site is served by the Vercel project `crewday` (account `daneshpm`), which is **not connected to GitHub**, so a merge does not deploy it. Deploy from this folder with `vercel deploy --prod` after any web change.
+- Check: `https://rooman-books.momsmagic.shop/manifest.json` and `https://rooman-books.momsmagic.shop/.well-known/assetlinks.json` should return JSON, not HTML.
 
 ## Step 2: Play Console
 1. Create the release: Internal testing → Create new release → upload `app-release-bundle.aab`.
 2. Store listing: paste from `play-store-listing.md`. Upload the 512 icon and the feature graphic. Add at least 2 real phone screenshots.
-3. Complete Dashboard tasks: privacy policy (`https://crewday101010mm.vercel.app/privacy`), app access (test account), ads (No), content rating, target audience (18+), data safety, category (Events), contact email.
+3. Complete Dashboard tasks: privacy policy (`https://rooman-books.momsmagic.shop/privacy`), app access (test account), ads (No), content rating, target audience (18+), data safety, category (Events), contact email.
 4. Roll out to Internal testing. The first upload goes through review.
 5. Production needs a closed test with 12 opted-in testers running for 14 days. Only then does "Apply for production" unlock.
 
@@ -48,5 +48,5 @@ Play Console → Setup → App integrity → copy the **App signing key certific
 
 ## Known gaps
 - No real phone screenshots yet (only one sample).
-- Firebase authorized domains: confirm `crewday101010mm.vercel.app` is listed under Authentication → Settings, or sign-in fails in the app.
+- Firebase authorized domains: add `rooman-books.momsmagic.shop` (and `crewday-iota.vercel.app`) under Authentication → Settings → Authorized domains, or Google sign-in fails in the app.
 - The privacy policy and data safety answers were written from the in-app policy. Check them against the actual data use before submitting.

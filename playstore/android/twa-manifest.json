@@ -1,6 +1,6 @@
 {
   "packageId": "app.crewday",
-  "host": "crewday101010mm.vercel.app",
+  "host": "rooman-books.momsmagic.shop",
   "name": "CrewDay",
   "launcherName": "CrewDay",
   "display": "standalone",
@@ -13,8 +13,8 @@
   "backgroundColor": "#FFF7FB",
   "enableNotifications": false,
   "startUrl": "/",
-  "iconUrl": "https://crewday101010mm.vercel.app/icons/icon-512.png",
-  "maskableIconUrl": "https://crewday101010mm.vercel.app/icons/icon-512-maskable.png",
+  "iconUrl": "https://rooman-books.momsmagic.shop/icons/icon-512.png",
+  "maskableIconUrl": "https://rooman-books.momsmagic.shop/icons/icon-512-maskable.png",
   "monochromeIconUrl": "",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
@@ -25,7 +25,7 @@
   "appVersion": "1.0.0",
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://crewday101010mm.vercel.app/manifest.json",
+  "webManifestUrl": "https://rooman-books.momsmagic.shop/manifest.json",
   "fallbackType": "customtabs",
   "features": {
     "locationDelegation": { "enabled": false },
