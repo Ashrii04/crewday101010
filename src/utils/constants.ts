@@ -119,8 +119,8 @@ export const SUPPORT_EMAIL = (import.meta.env.VITE_SUPPORT_EMAIL ?? '').trim()
 
 /**
  * Whether the online (Razorpay) checkout button is offered. It stays off until
- * the Cloud Functions behind it are deployed (Blaze plan) and Razorpay keys are
- * set; see docs/razorpay-setup.md. UPI payments confirmed by the organiser work
+ * the Vercel API routes behind it (api/razorpay-*.ts) have their server-only
+ * keys set; see docs/razorpay-setup.md. UPI payments confirmed by the organiser work
  * regardless of this flag.
  */
 export const ONLINE_PAYMENTS = import.meta.env.VITE_ONLINE_PAYMENTS === 'true'

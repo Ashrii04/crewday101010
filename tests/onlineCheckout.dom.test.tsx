@@ -1,7 +1,7 @@
 /**
  * The online (Razorpay) checkout button.
  *
- * Razorpay itself, the Cloud Function and the network are all stubbed: these
+ * Razorpay itself, the /api/razorpay-order route and the network are all stubbed: these
  * tests prove what the browser does and, just as important, what it never does
  * (send an amount, or mark anything paid).
  */

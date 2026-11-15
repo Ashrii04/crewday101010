@@ -1,15 +1,15 @@
-import { firebaseApp } from '@/firebase/config'
+import { auth } from '@/firebase/config'
 import type { Registration } from '@/types'
 
 /**
  * Online payment through Razorpay Checkout.
  *
  * Nothing here decides that a payment succeeded. The browser asks the
- * `createRazorpayOrder` Cloud Function for an order (the function reads the
- * price from the event, so no amount is ever sent from here), shows Razorpay's
- * own checkout, and then waits. The seat is confirmed by the signed
- * `razorpayWebhook` function, and the page learns of it through the live
- * registration subscription it already has.
+ * `/api/razorpay-order` route for an order (the route reads the price from the
+ * event, so no amount is ever sent from here), shows Razorpay's own checkout,
+ * and then waits. The seat is confirmed by the signed `/api/razorpay-webhook`
+ * route, and the page learns of it through the live registration subscription
+ * it already has.
  */
 
 const CHECKOUT_SRC = 'https://checkout.razorpay.com/v1/checkout.js'
@@ -77,24 +77,46 @@ export function loadCheckoutScript(): Promise<void> {
 
 /** Ask the server for an order for this registration. The amount is decided there. */
 export async function createRazorpayOrder(registrationId: string): Promise<RazorpayOrder> {
-  const { getFunctions, httpsCallable } = await import('firebase/functions')
-  const call = httpsCallable<{ registrationId: string }, RazorpayOrder>(
-    getFunctions(firebaseApp, 'asia-south1'),
-    'createRazorpayOrder',
-  )
+  const idToken = await auth.currentUser?.getIdToken().catch(() => undefined)
+  if (!idToken) {
+    throw new OnlinePaymentError('unauthenticated', 'Please sign in again to pay online.')
+  }
+
+  let response: Response
   try {
-    const result = await call({ registrationId })
-    return result.data
-  } catch (caught) {
-    const code = (caught as { code?: string }).code ?? ''
-    if (code.endsWith('failed-precondition') || code.endsWith('not-found') || code.endsWith('unavailable')) {
-      throw new OnlinePaymentError(
-        'not-available',
-        'Online payment is not available right now. Pay by UPI below instead.',
-      )
+    response = await fetch('/api/razorpay-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
+      body: JSON.stringify({ registrationId }),
+    })
+  } catch {
+    throw new OnlinePaymentError('order-failed', 'Could not start the payment. Please try again.')
+  }
+
+  if (response.ok) {
+    const order = (await response.json().catch(() => null)) as Partial<RazorpayOrder> | null
+    if (
+      order &&
+      typeof order.orderId === 'string' &&
+      typeof order.amount === 'number' &&
+      typeof order.currency === 'string' &&
+      typeof order.keyId === 'string'
+    ) {
+      return order as RazorpayOrder
     }
     throw new OnlinePaymentError('order-failed', 'Could not start the payment. Please try again.')
   }
+  // 503: payments are not set up on the server; 404: no such registration/event.
+  if (response.status === 503 || response.status === 404) {
+    throw new OnlinePaymentError(
+      'not-available',
+      'Online payment is not available right now. Pay by UPI below instead.',
+    )
+  }
+  if (response.status === 401) {
+    throw new OnlinePaymentError('unauthenticated', 'Please sign in again to pay online.')
+  }
+  throw new OnlinePaymentError('order-failed', 'Could not start the payment. Please try again.')
 }
 
 /**
