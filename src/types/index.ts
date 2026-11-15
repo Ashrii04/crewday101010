@@ -172,6 +172,17 @@ export type RegistrationStatus = 'confirmed' | 'pending_payment' | 'cancelled' |
 
 export type PaymentStatus = 'not_required' | 'pending' | 'paid' | 'failed' | 'refunded'
 
+/** How a paid registration was settled. Absent until a payment is confirmed. */
+export type PaymentMethod = 'upi_manual' | 'razorpay'
+
+/** The organiser's UPI details, stored at `settings/payments` (public read). */
+export interface PaymentSettings {
+  /** Virtual payment address, e.g. `crewday@okaxis`. */
+  upiId: string
+  /** Name shown in the member's UPI app when they pay. */
+  payeeName: string
+}
+
 export type AttendanceStatus = 'not_checked_in' | 'checked_in' | 'no_show'
 
 export interface Registration {
@@ -202,6 +213,13 @@ export interface Registration {
   checkedInBy: string
   cancelledAt: FireDate
   cancelledReason?: string
+  /** Set when an organiser confirms a payment; never writable by the member. */
+  paymentMethod?: PaymentMethod
+  paidAt?: FireDate
+  /** Uid of the organiser who confirmed the payment. */
+  confirmedBy?: string
+  /** The UPI transaction reference (UTR), when the organiser recorded one. */
+  paymentReference?: string
   updatedAt: FireDate
 }
 

@@ -536,3 +536,9 @@ export const sendPasswordReset = onCall<{ email: string }>(async (request) => {
 
   return { ok: true }
 })
+
+/* -------------------------------------------------------------------------- */
+/*                       Razorpay online payments (dormant)                    */
+/* -------------------------------------------------------------------------- */
+
+export { createRazorpayOrder, razorpayWebhook } from './payments'

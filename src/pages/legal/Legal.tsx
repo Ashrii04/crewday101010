@@ -112,7 +112,7 @@ export function TermsPage() {
 
 export function PrivacyPage() {
   return (
-    <LegalShell title="Privacy Policy" updated="24 October 2026">
+    <LegalShell title="Privacy Policy" updated="15 November 2026">
       <section>
         <p>
           This policy explains what CrewDay collects, why, who can see it, and how you can have it
@@ -140,6 +140,12 @@ export function PrivacyPage() {
             <strong>Registrations</strong> — which events you register for, your ticket code and
             whether you were checked in. Your name, email and phone number are copied onto each
             registration so the organiser can run the event.
+          </li>
+          <li>
+            <strong>Payments for paid events</strong> — you pay the organiser directly by UPI,
+            using your own UPI app, or, where an event offers it, online through Razorpay. CrewDay
+            stores only the payment status, the payment method and a payment reference; we never
+            see or store your UPI PIN, bank account or card details.
           </li>
           <li>
             <strong>Things you write</strong> — event suggestions, problem reports and event
@@ -203,6 +209,12 @@ export function PrivacyPage() {
           </li>
           <li>
             <strong>Vercel</strong> — hosts the website and may keep standard server logs.
+          </li>
+          <li>
+            <strong>Razorpay</strong> — takes online payments (card, UPI, netbanking) for events that
+            offer it. When you choose to pay online, your name, email and phone number are passed to
+            Razorpay to complete the payment, and Razorpay's own privacy policy applies to the
+            payment details you enter with them.
           </li>
         </ul>
       </section>

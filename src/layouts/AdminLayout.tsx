@@ -11,6 +11,7 @@ import {
   QrCode,
   Ticket,
   Users,
+  Wallet,
   X,
 } from 'lucide-react'
 import clsx from 'clsx'
@@ -27,6 +28,7 @@ const NAV = [
   { to: '/admin/requests', label: 'Requests', icon: Inbox, end: false },
   { to: '/admin/users', label: 'Users', icon: Users, end: false },
   { to: '/admin/interests', label: 'Interests', icon: Heart, end: false },
+  { to: '/admin/payments', label: 'Payments', icon: Wallet, end: false },
   { to: '/admin/reports', label: 'Reports', icon: MessageSquareWarning, end: false },
 ]
 

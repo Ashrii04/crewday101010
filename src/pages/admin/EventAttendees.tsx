@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, CheckCircle2, Download, QrCode, Search, Undo2, UserPlus } from 'lucide-react'
+import { ArrowLeft, BadgeCheck, CheckCircle2, Download, QrCode, Search, Undo2, UserPlus } from 'lucide-react'
 import { Button, LinkButton } from '@/components/ui/Button'
 import { Badge, Card, StatTile } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Field'
@@ -13,13 +13,20 @@ import {
   getAllEventRegistrations,
   listWaitlist,
   manualCheckIn,
+  markRegistrationPaid,
   promoteFromWaitlist,
   undoCheckIn,
 } from '@/services/registrationService'
 import { summariseRegistrations } from '@/services/adminService'
 import { createNotification } from '@/services/notificationService'
 import { downloadCsv, toCsv } from '@/utils/csv'
-import { formatClockTime, formatDateTime, formatEventDateShort, formatPercent } from '@/utils/format'
+import {
+  formatClockTime,
+  formatDateTime,
+  formatEventDateShort,
+  formatPercent,
+  formatPrice,
+} from '@/utils/format'
 import type { CrewEvent, Registration, WaitlistEntry } from '@/types'
 
 function AttendanceBadge({ registration }: { registration: Registration }) {
@@ -44,6 +51,8 @@ export default function EventAttendeesPage() {
   const [busyId, setBusyId] = useState<string | null>(null)
   const [undoTarget, setUndoTarget] = useState<Registration | null>(null)
   const [promoting, setPromoting] = useState(false)
+  const [payTarget, setPayTarget] = useState<Registration | null>(null)
+  const [payReference, setPayReference] = useState('')
 
   const load = useCallback(() => {
     if (!eventId) return
@@ -105,6 +114,40 @@ export default function EventAttendeesPage() {
     }
   }
 
+  const openMarkPaid = (registration: Registration) => {
+    setPayReference('')
+    setPayTarget(registration)
+  }
+
+  // The service re-checks the registration inside a transaction, so a seat the
+  // member cancelled or another organiser already confirmed is reported, not flipped.
+  const onMarkPaid = async () => {
+    if (!user || !payTarget) return
+    const target = payTarget
+    setBusyId(target.id)
+    try {
+      const outcome = await markRegistrationPaid(target.id, user.uid, payReference)
+      if (outcome.result === 'paid') {
+        success(`${target.name || 'Attendee'} is confirmed.`)
+        await createNotification({
+          userId: target.userId,
+          type: 'registration_confirmed',
+          title: `Payment received: ${target.eventTitle}`,
+          body: 'The organiser confirmed your payment. Your QR ticket is now active in My Events.',
+          eventId: target.eventId,
+        }).catch(() => undefined)
+      } else {
+        toastError(outcome.message)
+      }
+      setPayTarget(null)
+      load()
+    } catch {
+      toastError('Could not mark that payment as received.')
+    } finally {
+      setBusyId(null)
+    }
+  }
+
   const onPromote = async () => {
     setPromoting(true)
     try {
@@ -138,6 +181,9 @@ export default function EventAttendeesPage() {
       participationType: registration.participationType,
       registrationStatus: registration.registrationStatus,
       paymentStatus: registration.paymentStatus,
+      paymentMethod: registration.paymentMethod ?? '',
+      paymentReference: registration.paymentReference ?? '',
+      paidAt: formatDateTime(registration.paidAt ?? null),
       price: registration.price,
       attendanceStatus: registration.attendanceStatus,
       registeredAt: formatDateTime(registration.registeredAt),
@@ -154,6 +200,9 @@ export default function EventAttendeesPage() {
         { key: 'participationType', label: 'Type' },
         { key: 'registrationStatus', label: 'Status' },
         { key: 'paymentStatus', label: 'Payment' },
+        { key: 'paymentMethod', label: 'Payment method' },
+        { key: 'paymentReference', label: 'Payment reference' },
+        { key: 'paidAt', label: 'Paid at' },
         { key: 'price', label: 'Price' },
         { key: 'attendanceStatus', label: 'Attendance' },
         { key: 'registeredAt', label: 'Registered at' },
@@ -301,7 +350,16 @@ export default function EventAttendeesPage() {
                         : '—'}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {registration.registrationStatus === 'confirmed' &&
+                      {registration.registrationStatus === 'pending_payment' ? (
+                        <Button
+                          size="sm"
+                          loading={busyId === registration.id}
+                          icon={<BadgeCheck size={15} />}
+                          onClick={() => openMarkPaid(registration)}
+                        >
+                          Mark paid
+                        </Button>
+                      ) : registration.registrationStatus === 'confirmed' &&
                       registration.attendanceStatus !== 'checked_in' ? (
                         <Button
                           size="sm"
@@ -351,7 +409,15 @@ export default function EventAttendeesPage() {
                       ? ` · ${formatClockTime(registration.checkInTime)}`
                       : ''}
                   </span>
-                  {registration.registrationStatus === 'confirmed' &&
+                  {registration.registrationStatus === 'pending_payment' ? (
+                    <Button
+                      size="sm"
+                      loading={busyId === registration.id}
+                      onClick={() => openMarkPaid(registration)}
+                    >
+                      Mark paid
+                    </Button>
+                  ) : registration.registrationStatus === 'confirmed' &&
                   registration.attendanceStatus !== 'checked_in' ? (
                     <Button
                       size="sm"
@@ -382,6 +448,46 @@ export default function EventAttendeesPage() {
           }
         />
       )}
+
+      <ConfirmDialog
+        open={Boolean(payTarget)}
+        title="Mark this payment as received?"
+        description="Only do this once the money is in your account. Their seat is confirmed and their QR code starts working."
+        confirmLabel="Mark paid"
+        tone="primary"
+        loading={busyId === payTarget?.id}
+        onConfirm={() => void onMarkPaid()}
+        onCancel={() => setPayTarget(null)}
+      >
+        {payTarget ? (
+          <div className="space-y-3">
+            <div className="space-y-1.5 rounded-2xl bg-ink-50 p-4 text-sm">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-ink-500">Attendee</span>
+                <span className="font-semibold text-ink-900">{payTarget.name || 'Unnamed'}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-ink-500">Amount</span>
+                <span className="font-semibold text-ink-900">
+                  {formatPrice(payTarget.price, payTarget.currency)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-ink-500">Registration ID</span>
+                <span className="font-mono font-bold text-ink-900">{payTarget.registrationCode}</span>
+              </div>
+            </div>
+            <Input
+              label="UPI reference (optional)"
+              value={payReference}
+              maxLength={40}
+              onChange={(event) => setPayReference(event.target.value)}
+              placeholder="Transaction ID from your bank app"
+              autoComplete="off"
+            />
+          </div>
+        ) : null}
+      </ConfirmDialog>
 
       <ConfirmDialog
         open={Boolean(undoTarget)}

@@ -4,7 +4,8 @@ import { CalendarPlus, PartyPopper } from 'lucide-react'
 import { Button, LinkButton } from '@/components/ui/Button'
 import { EmptyState, LoadingScreen } from '@/components/ui/Feedback'
 import { QRTicket } from '@/components/qr/QRTicket'
-import { getRegistration } from '@/services/registrationService'
+import { PaymentPanel } from '@/components/payments/PaymentPanel'
+import { subscribeToRegistration } from '@/services/registrationService'
 import { combineDateTime, formatEventDate, formatTime } from '@/utils/format'
 import type { Registration } from '@/types'
 
@@ -46,11 +47,17 @@ export default function RegistrationSuccessPage() {
   const [registration, setRegistration] = useState<Registration | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Live, so the payment panel gives way to an active QR as soon as the
+  // organiser confirms the payment.
   useEffect(() => {
-    getRegistration(registrationId)
-      .then(setRegistration)
-      .catch(() => undefined)
-      .finally(() => setLoading(false))
+    return subscribeToRegistration(
+      registrationId,
+      (next) => {
+        setRegistration(next)
+        setLoading(false)
+      },
+      () => setLoading(false),
+    )
   }, [registrationId])
 
   if (loading) return <LoadingScreen label="Creating your ticket…" />
@@ -79,11 +86,13 @@ export default function RegistrationSuccessPage() {
         <p className="mt-2 text-ink-500">
           {confirmed
             ? `See you on ${formatEventDate(registration.eventDate)} at ${formatTime(registration.eventStartTime)}.`
-            : 'Complete payment and your QR code activates automatically.'}
+            : 'Pay the organiser below and your QR code activates once they confirm it.'}
         </p>
       </div>
 
       <QRTicket registration={registration} />
+
+      <PaymentPanel registration={registration} />
 
       <div className="mt-6 space-y-3">
         <Button

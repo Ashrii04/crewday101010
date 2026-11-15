@@ -44,6 +44,7 @@ const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsers'))
 const AdminInterestsPage = lazy(() => import('@/pages/admin/AdminInterests'))
 const AdminRequestsPage = lazy(() => import('@/pages/admin/AdminRequests'))
 const AdminReportsPage = lazy(() => import('@/pages/admin/AdminReports'))
+const AdminPaymentsPage = lazy(() => import('@/pages/admin/AdminPayments'))
 
 // Legal pages are named exports from one module.
 const DeleteAccountPage = lazy(() =>
@@ -158,6 +159,7 @@ export function AppRoutes() {
           <Route path="interests" element={<AdminInterestsPage />} />
           <Route path="requests" element={<AdminRequestsPage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="payments" element={<AdminPaymentsPage />} />
         </Route>
 
         {/* Legacy / convenience redirects */}

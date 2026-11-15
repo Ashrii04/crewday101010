@@ -9,6 +9,7 @@ import { ConfirmDialog } from '@/components/ui/Modal'
 import { EmptyState, InlineAlert, LoadingScreen } from '@/components/ui/Feedback'
 import { Textarea } from '@/components/ui/Field'
 import { QRTicket } from '@/components/qr/QRTicket'
+import { PaymentPanel } from '@/components/payments/PaymentPanel'
 import { COLLECTIONS, db } from '@/firebase/config'
 import { useAuth } from '@/hooks/useAuth'
 import { useToast } from '@/hooks/useToast'
@@ -193,6 +194,9 @@ export default function TicketPage() {
       ) : null}
 
       <QRTicket registration={registration} />
+
+      {/* Live with the subscription above: gone once the payment is confirmed. */}
+      <PaymentPanel registration={registration} />
 
       <div className="mt-6 space-y-3">
         <LinkButton to={`/events/${registration.eventId}`} variant="outline" fullWidth icon={<ExternalLink size={17} />}>

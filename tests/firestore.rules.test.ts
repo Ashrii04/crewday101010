@@ -1427,3 +1427,178 @@ describe('erasing personal details from event requests, reports and feedback', (
     )
   })
 })
+
+/* -------------------------------------------------------------------------- */
+/*                         Manual UPI payment confirmation                    */
+/* -------------------------------------------------------------------------- */
+
+describe('manual UPI payments: confirming a pending_payment registration', () => {
+  const pendingRegistration = (uid: string, overrides: Record<string, unknown> = {}) =>
+    baseRegistration(uid, {
+      price: 199,
+      paymentStatus: 'pending',
+      registrationStatus: 'pending_payment',
+      ...overrides,
+    })
+
+  const paidFields = () => ({
+    paymentStatus: 'paid',
+    registrationStatus: 'confirmed',
+    paymentMethod: 'upi_manual',
+    paidAt: serverTimestamp(),
+    confirmedBy: ADMIN,
+    updatedAt: serverTimestamp(),
+  })
+
+  beforeEach(async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await updateDoc(doc(context.firestore(), 'events', EVENT), { price: 199, isFree: false })
+      await setDoc(
+        doc(context.firestore(), 'registrations', registrationId),
+        pendingRegistration(MEMBER),
+      )
+    })
+  })
+
+  it('lets an admin mark it paid and confirmed, with the new payment fields', async () => {
+    await assertSucceeds(updateDoc(doc(asAdmin(), 'registrations', registrationId), paidFields()))
+  })
+
+  it('lets an admin also record a payment reference', async () => {
+    await assertSucceeds(
+      updateDoc(doc(asAdmin(), 'registrations', registrationId), {
+        ...paidFields(),
+        paymentReference: '412345678901',
+      }),
+    )
+  })
+
+  it.each(['paymentStatus', 'registrationStatus', 'paymentMethod', 'paidAt', 'confirmedBy'] as const)(
+    'does not let the owner write %s on their own registration',
+    async (field) => {
+      const values = {
+        paymentStatus: 'paid',
+        registrationStatus: 'confirmed',
+        paymentMethod: 'upi_manual',
+        paidAt: serverTimestamp(),
+        confirmedBy: ADMIN,
+      }
+      await assertFails(
+        updateDoc(doc(asMember(), 'registrations', registrationId), {
+          [field]: values[field],
+          updatedAt: serverTimestamp(),
+        }),
+      )
+    },
+  )
+
+  it('does not let the owner confirm their own payment in one write', async () => {
+    await assertFails(updateDoc(doc(asMember(), 'registrations', registrationId), paidFields()))
+  })
+
+  it('does not let the owner hide a payment-field write inside a cancellation', async () => {
+    await assertFails(
+      updateDoc(doc(asMember(), 'registrations', registrationId), {
+        registrationStatus: 'cancelled',
+        cancelledAt: serverTimestamp(),
+        cancelledReason: 'plans changed',
+        qrToken: 'revoked',
+        paymentStatus: 'paid',
+        paymentMethod: 'upi_manual',
+        updatedAt: serverTimestamp(),
+      }),
+    )
+  })
+
+  it('does not let another member mark it paid', async () => {
+    await assertFails(updateDoc(doc(asOther(), 'registrations', registrationId), paidFields()))
+  })
+
+  it('does not let a signed-out visitor mark it paid', async () => {
+    await assertFails(updateDoc(doc(asGuest(), 'registrations', registrationId), paidFields()))
+  })
+
+  it('does not let a member register with payment fields already filled in', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await deleteDoc(doc(context.firestore(), 'registrations', registrationId))
+    })
+    await assertFails(
+      setDoc(
+        doc(asMember(), 'registrations', registrationId),
+        pendingRegistration(MEMBER, { paymentMethod: 'upi_manual', confirmedBy: ADMIN }),
+      ),
+    )
+    await assertFails(
+      setDoc(
+        doc(asMember(), 'registrations', registrationId),
+        pendingRegistration(MEMBER, { paidAt: serverTimestamp() }),
+      ),
+    )
+    await assertSucceeds(
+      setDoc(doc(asMember(), 'registrations', registrationId), pendingRegistration(MEMBER)),
+    )
+  })
+
+  it('does not let a cancelled member re-register with payment fields already filled in', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(
+        doc(context.firestore(), 'registrations', registrationId),
+        pendingRegistration(MEMBER, { registrationStatus: 'cancelled', cancelledAt: serverTimestamp() }),
+      )
+    })
+    await assertFails(
+      setDoc(
+        doc(asMember(), 'registrations', registrationId),
+        pendingRegistration(MEMBER, { paymentMethod: 'upi_manual', paidAt: serverTimestamp() }),
+      ),
+    )
+    await assertSucceeds(
+      setDoc(doc(asMember(), 'registrations', registrationId), pendingRegistration(MEMBER)),
+    )
+  })
+})
+
+describe('settings/payments (organiser UPI details)', () => {
+  const payments = { upiId: 'crewday@okaxis', payeeName: 'CrewDay Events' }
+
+  beforeEach(async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'settings', 'payments'), payments)
+    })
+  })
+
+  it('is readable by a signed-out visitor, a member and an admin', async () => {
+    await assertSucceeds(getDoc(doc(asGuest(), 'settings', 'payments')))
+    await assertSucceeds(getDoc(doc(asMember(), 'settings', 'payments')))
+    await assertSucceeds(getDoc(doc(asAdmin(), 'settings', 'payments')))
+  })
+
+  it('can be read even before the organiser has created it', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await deleteDoc(doc(context.firestore(), 'settings', 'payments'))
+    })
+    await assertSucceeds(getDoc(doc(asMember(), 'settings', 'payments')))
+  })
+
+  it('lets an admin create and change it', async () => {
+    await assertSucceeds(
+      setDoc(doc(asAdmin(), 'settings', 'payments'), { ...payments, upiId: 'new@oksbi' }),
+    )
+  })
+
+  it('does not let a member write it', async () => {
+    await assertFails(
+      setDoc(doc(asMember(), 'settings', 'payments'), { ...payments, upiId: 'me@okaxis' }),
+    )
+    await assertFails(updateDoc(doc(asMember(), 'settings', 'payments'), { upiId: 'me@okaxis' }))
+  })
+
+  it('does not let a signed-out visitor write or delete it', async () => {
+    await assertFails(setDoc(doc(asGuest(), 'settings', 'payments'), payments))
+    await assertFails(deleteDoc(doc(asGuest(), 'settings', 'payments')))
+  })
+
+  it('does not let a member delete it', async () => {
+    await assertFails(deleteDoc(doc(asMember(), 'settings', 'payments')))
+  })
+})
