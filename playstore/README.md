@@ -20,6 +20,7 @@ The app icon (512×512) is `public/icons/icon-512.png` in the repo root.
 Google Play requires new apps and updates to target **Android 16 (API level 36)** (deadline 31 August 2026; the 1 November 2026 extension has also passed). The bundle first built for this folder targeted API 35, so Play Console would probably reject it. `android/twa-manifest.json` now says `targetSdkVersion: 36`; rebuild with the same upload keystore:
 
 1. `bubblewrap update` (regenerates the Android project from the manifest), then `bubblewrap build`.
+   The launcher icons on the site (`public/icons/`) are now the new CD emblem, so a rebuilt bundle also picks up the new icon; an older bundle shows the old metallic logo.
    This rebuild also matters because the **site address changed** to `rooman-books.momsmagic.shop`: the host is baked into the app, so a bundle built earlier still points at the old `crewday101010mm.vercel.app` address and must not be uploaded.
 2. If your Bubblewrap version cannot target API 36, upgrade it (`npm i -g @bubblewrap/cli`) and retry. If it still cannot, ship the Capacitor build instead (see the Android section of the root README), which already targets API 36.
 3. Check the result before uploading: open the `.aab` in Android Studio (Build > Analyze APK) or run `bundletool dump manifest` and confirm `targetSdkVersion` is 36.
