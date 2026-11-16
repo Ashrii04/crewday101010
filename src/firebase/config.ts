@@ -80,9 +80,16 @@ export const useEmulators =
 
 /* ------------------------------ Emulators -------------------------------- */
 
+/**
+ * The emulators run on the dev machine. Reach them at the same host the page
+ * was loaded from, so a phone on the same Wi-Fi talks to the laptop, not to
+ * its own 127.0.0.1.
+ */
+export const emulatorHost = typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1'
+
 if (useEmulators) {
-  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true })
-  connectFirestoreEmulator(db, '127.0.0.1', 8080)
+  connectAuthEmulator(auth, `http://${emulatorHost}:9099`, { disableWarnings: true })
+  connectFirestoreEmulator(db, emulatorHost, 8080)
 }
 
 /* ------------------------------ Collections ------------------------------ */

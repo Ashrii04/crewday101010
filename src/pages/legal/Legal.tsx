@@ -8,8 +8,8 @@ const PRIVACY_CONTACT_EMAIL = '[support email]'
 
 function LegalShell({ title, updated, children }: { title: string; updated: string; children: ReactNode }) {
   return (
-    <div className="min-h-dvh bg-ink-50">
-      <header className="border-b border-ink-100 bg-white">
+    <div className="min-h-dvh">
+      <header className="border-b border-ink-100 bg-surface">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-4">
           <Link to="/">
             <Logo />

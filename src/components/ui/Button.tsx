@@ -12,16 +12,16 @@ const BASE =
 const VARIANTS: Record<ButtonVariant, string> = {
   // One hot pink, reserved for the primary action on a screen.
   primary:
-    'bg-brand-500 text-white shadow-pink hover:bg-brand-600 disabled:hover:bg-brand-500',
-  secondary: 'bg-sky-500 text-white shadow-soft hover:bg-sky-600',
-  outline: 'border-2 border-ink-200 bg-white text-ink-700 hover:border-brand-300 hover:text-brand-600',
+    'bg-linear-to-r from-sky-400 to-brand-500 text-white shadow-gold hover:from-sky-500 hover:to-brand-600',
+  secondary: 'bg-sky-500 text-obsidian shadow-soft hover:bg-sky-600',
+  outline: 'border-2 border-ink-200 bg-surface text-ink-700 hover:border-brand-300 hover:text-brand-600',
   ghost: 'text-ink-600 hover:bg-ink-100',
   danger: 'bg-sunset-500 text-white hover:bg-sunset-600',
   // For use on dark or coloured backgrounds. A real variant rather than
-  // `className="bg-white text-brand-700"`, because that leaves two text-colour
+  // `className="bg-surface text-brand-700"`, because that leaves two text-colour
   // utilities on the element and Tailwind resolves the winner by stylesheet
   // order — which silently produced white text on a white button.
-  inverse: 'bg-white text-brand-600 shadow-soft hover:bg-brand-50',
+  inverse: 'bg-surface text-brand-600 shadow-soft hover:bg-brand-50',
 }
 
 const SIZES: Record<ButtonSize, string> = {

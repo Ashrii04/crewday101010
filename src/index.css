@@ -8,79 +8,95 @@
    action on a screen so it always reads as "tap this".
 --------------------------------------------------------------------------- */
 @theme {
-  --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Nunito', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 
   /* Ink — deep navy, used for all text and the admin chrome. */
-  --color-ink-50: #f7fafd;
-  --color-ink-100: #eef4fa;
-  --color-ink-200: #dbe6f2;
-  --color-ink-300: #b6c9de;
-  --color-ink-400: #8aa3c0;
-  --color-ink-500: #6480a1;
-  --color-ink-600: #4a6383;
-  --color-ink-700: #374d68;
-  --color-ink-800: #26374d;
-  --color-ink-900: #16273a;
-  --color-ink-950: #0e1b2b;
-
-  /* Brand — the hot pink call to action. */
-  --color-brand-50: #fff1f6;
-  --color-brand-100: #ffe3ed;
-  --color-brand-200: #ffc8dc;
-  --color-brand-300: #ff9fc1;
-  --color-brand-400: #ff6ba1;
-  --color-brand-500: #ff4d8d;
-  --color-brand-600: #f62d76;
-  --color-brand-700: #d81a5e;
-  --color-brand-800: #b3174e;
-  --color-brand-900: #931844;
-
-  /* Sky — the blue half of the brand gradient, for secondary accents. */
-  --color-sky-50: #eff7ff;
-  --color-sky-100: #dcedfe;
-  --color-sky-200: #c0e0fd;
-  --color-sky-300: #94cdfb;
-  --color-sky-400: #61b2f7;
-  --color-sky-500: #4a9eff;
-  --color-sky-600: #2b7fe8;
-  --color-sky-700: #2267c4;
-  --color-sky-800: #22559f;
-  --color-sky-900: #21497e;
-
-  /* Grape — lavender, for tertiary tiles. */
-  --color-grape-50: #f6f3ff;
-  --color-grape-100: #ede9fe;
-  --color-grape-200: #ddd6fe;
-  --color-grape-300: #c4b5fd;
-  --color-grape-400: #a78bfa;
-  --color-grape-500: #8b5cf6;
-  --color-grape-600: #7c3aed;
-
+  /* Obsidian, espresso, bronze, champagne and chrome silver, from the CrewDay brand brief. */
+  --color-obsidian: #2d2a4a;
+  --color-surface: rgb(255 251 254 / 0.82);
+  --color-surface-raised: rgb(255 255 255 / 0.92);
+  --color-ink-50: #faf7fd;
+  --color-ink-100: #f3effa;
+  --color-ink-200: #e6e1f3;
+  --color-ink-300: #cfcae3;
+  --color-ink-400: #aaa5c6;
+  --color-ink-500: #8a85aa;
+  --color-ink-600: #6b6690;
+  --color-ink-700: #534e7a;
+  --color-ink-800: #3f3b63;
+  --color-ink-900: #2d2a4a;
+  --color-ink-950: #1d1a35;
+  /* brand: rose accent, from the reference palette. */  --color-brand-50: #f5f1ff;
+  --color-brand-100: #ece4ff;
+  --color-brand-200: #dccbff;
+  --color-brand-300: #c3a8fb;
+  --color-brand-400: #a685f3;
+  --color-brand-500: #8b6ae6;
+  --color-brand-600: #7552d6;
+  --color-brand-700: #5f3fbb;
+  --color-brand-800: #4b3196;
+  --color-brand-900: #3a2674;
+  --color-brand-950: #3a2674;
+  /* gold: champagne metallic from the logo, for highlights and focus rings. */
+  --color-gold-50: #2a1e12;
+  --color-gold-100: #35261a;
+  --color-gold-200: #4d3822;
+  --color-gold-300: #8a6a43;
+  --color-gold-400: #b28450;
+  --color-gold-500: #c69a58;
+  --color-gold-600: #e8c58a;
+  --color-gold-700: #f0d7a8;
+  --color-gold-800: #f7e7c8;
+  --color-gold-900: #fbf1de;
+  --color-gold-950: #fbf1de;
+  --color-sky-50: #fff1f6;
+  --color-sky-100: #ffe2ec;
+  --color-sky-200: #ffc6d9;
+  --color-sky-300: #ff9fbf;
+  --color-sky-400: #f97ba4;
+  --color-sky-500: #ef5d8f;
+  --color-sky-600: #d84378;
+  --color-sky-700: #b53262;
+  --color-sky-800: #8d274d;
+  --color-sky-900: #6a1f3b;
+  --color-grape-50: #f0f3ff;
+  --color-grape-100: #e2e8ff;
+  --color-grape-200: #c8d3ff;
+  --color-grape-300: #a6b6fb;
+  --color-grape-400: #8fa6f5;
+  --color-grape-500: #6f8bf0;
+  --color-grape-600: #5a73d8;
+  --color-grape-700: #4a5fb5;
+  --color-grape-800: #3b4c8f;
+  --color-grape-900: #2e3b6e;
   --color-mint-50: #ecfdf5;
   --color-mint-100: #d1fae5;
+  --color-mint-200: #a7f3d0;
+  --color-mint-300: #6ee7b7;
   --color-mint-400: #34d399;
   --color-mint-500: #10b981;
   --color-mint-600: #059669;
-
-  /* Sunset — warm rose, reserved for destructive and error states. */
-  --color-sunset-50: #fff1f2;
-  --color-sunset-100: #ffe4e6;
-  --color-sunset-200: #fecdd3;
-  --color-sunset-300: #fda4af;
-  --color-sunset-400: #fb7185;
-  --color-sunset-500: #f43f5e;
-  --color-sunset-600: #e11d48;
-  --color-sunset-700: #be123c;
-  --color-sunset-800: #9f1239;
-  --color-sunset-900: #881337;
+  --color-mint-700: #047857;
+  --color-mint-800: #065f46;
+  --color-mint-900: #064e3b;
+  --color-sunset-50: #fff1ee;
+  --color-sunset-100: #ffe0d9;
+  --color-sunset-200: #ffc2b5;
+  --color-sunset-300: #ff9a86;
+  --color-sunset-400: #f4735c;
+  --color-sunset-500: #e5533f;
+  --color-sunset-600: #c73f2d;
+  --color-sunset-700: #a33325;
+  --color-sunset-800: #7f2a20;
+  --color-sunset-900: #5f211a;
 
   --radius-card: 1.5rem;
 
   /* Shadows are wide and faint — the design reads as soft, not layered. */
-  --shadow-soft: 0 1px 2px rgb(22 39 58 / 0.04), 0 10px 26px -14px rgb(22 39 58 / 0.14);
-  --shadow-lift: 0 2px 6px rgb(22 39 58 / 0.05), 0 20px 44px -20px rgb(22 39 58 / 0.22);
-  --shadow-pink: 0 10px 26px -10px rgb(255 77 141 / 0.55);
+  --shadow-soft: 0 2px 4px rgb(95 63 187 / 0.06), 0 16px 32px -14px rgb(95 63 187 / 0.25);
+  --shadow-lift: 0 4px 10px rgb(95 63 187 / 0.08), 0 28px 50px -20px rgb(95 63 187 / 0.35);
+  --shadow-gold: 0 12px 26px -10px rgb(139 106 230 / 0.5);
 
   --animate-fade-up: fade-up 0.35s ease-out both;
   --animate-fade-in: fade-in 0.25s ease-out both;
@@ -137,7 +153,7 @@
     font-family: var(--font-sans);
     color: var(--color-ink-900);
     /* Warm off-white base so the blooms have something to sit on. */
-    background-color: #fdf7fb;
+    background-color: #eee3ff;
     -webkit-font-smoothing: antialiased;
     overscroll-behavior: none;
   }
@@ -157,12 +173,12 @@
     z-index: -1;
     pointer-events: none;
     background-image:
-      /* Four soft blooms in the logo's own colours — pink, blue, lavender —
-         placed at the corners so no single one dominates the reading area. */
-      radial-gradient(58% 46% at 104% 0%, rgb(74 158 255 / 0.26) 0%, transparent 62%),
-      radial-gradient(54% 42% at -6% 6%, rgb(255 107 161 / 0.26) 0%, transparent 60%),
-      radial-gradient(62% 38% at 88% 96%, rgb(167 139 250 / 0.22) 0%, transparent 62%),
-      radial-gradient(58% 36% at 6% 92%, rgb(255 159 193 / 0.2) 0%, transparent 60%);
+      /* Pastel clay room: lavender drifting into pink. */
+      radial-gradient(55% 45% at 100% 0%, rgb(255 198 217 / 0.55) 0%, transparent 62%),
+      radial-gradient(50% 40% at 0% 10%, rgb(220 203 255 / 0.7) 0%, transparent 60%),
+      radial-gradient(55% 40% at 95% 100%, rgb(249 123 164 / 0.25) 0%, transparent 62%),
+      radial-gradient(50% 35% at 0% 95%, rgb(166 133 243 / 0.3) 0%, transparent 60%),
+      linear-gradient(135deg, #e7dcff 0%, #f3e3f7 55%, #fbe0ec 100%);
   }
 
   h1,
@@ -224,4 +240,86 @@
   background-image: linear-gradient(100deg, var(--color-brand-500), var(--color-sky-500));
   background-clip: text;
   color: transparent;
+}
+
+/* Glass panels: every surface blurs what sits behind it. */
+.bg-surface {
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+}
+/* The bright glass edge. Outline, not border, so layout and shadows are untouched;
+   skipped while focused so the focus ring still shows. */
+.bg-surface:not(:focus-visible) {
+  outline: 1px solid rgb(255 255 255 / 0.9);
+  outline-offset: -1px;
+}
+
+/* In-app loader: the assembled emblem breathes with an aurora glow. */
+@keyframes emblem-breathe {
+  0%,
+  100% {
+    transform: scale(0.97);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+    filter: drop-shadow(0 0 18px rgb(166 133 243 / 0.5));
+  }
+}
+
+/* Native date pickers, scrollbars and form controls follow the light theme. */
+:root {
+  color-scheme: light;
+}
+
+/* Plan my CrewDay: confetti flies out from the card centre. */
+@keyframes confetti-burst {
+  from {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Pastel stat tiles: lilac, pink, butter and sky, repeating across a row. */
+.stat-pastel > :nth-child(4n + 1) {
+  background-color: rgb(236 228 255 / 0.92);
+}
+.stat-pastel > :nth-child(4n + 2) {
+  background-color: rgb(255 226 236 / 0.92);
+}
+.stat-pastel > :nth-child(4n + 3) {
+  background-color: rgb(255 243 207 / 0.92);
+}
+.stat-pastel > :nth-child(4n + 4) {
+  background-color: rgb(226 235 255 / 0.92);
+}
+
+/* Floating badges around the auth card. */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Sign-in, sign-up and reset: tighter spacing so the card fits one screen. */
+.auth-compact .my-6 {
+  margin-block: 0.7rem;
+}
+.auth-compact .h-14 {
+  height: 2.9rem;
+}
+.auth-compact .h-12 {
+  height: 2.75rem;
+}
+.auth-compact .space-y-4 > :not(:last-child) {
+  margin-block-end: 0.65rem;
 }

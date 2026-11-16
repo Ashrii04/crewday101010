@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CrewDay logo">
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="#fff7fb"/>
+
+  <!-- Confetti and sparkles -->
+  <circle cx="84" cy="92" r="7" fill="#ff4d8d"/>
+  <circle cx="436" cy="86" r="6" fill="#57b2ff"/>
+  <circle cx="458" cy="418" r="7" fill="#ffc857"/>
+  <circle cx="66" cy="410" r="6" fill="#4fd1a5"/>
+  <circle cx="118" cy="466" r="5" fill="#b48cf2"/>
+  <path d="M420 92 L424 106 L438 110 L424 114 L420 128 L416 114 L402 110 L416 106Z" fill="#b48cf2"/>
+  <path d="M96 176 L99 184 L107 187 L99 190 L96 198 L93 190 L85 187 L93 184Z" fill="#ffc857"/>
+
+  <!-- Linked hands: the ring of people, open on the right -->
+  <path d="M321 383 A130 130 0 1 1 340 170" fill="none" stroke="#ffd6e7" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Your seat, saved for you -->
+  <circle cx="386" cy="270" r="28" fill="#ffffff" stroke="#94cdfb" stroke-width="4" stroke-dasharray="6 6"/>
+  <path d="M386 259 V281 M375 270 H397" stroke="#4a9eff" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- 1. Laughing (bottom right) -->
+  <circle cx="321" cy="383" r="30" fill="#ff6ba1" stroke="#fff7fb" stroke-width="4"/>
+  <path d="M305 377 q5 -5 10 0 M327 377 q5 -5 10 0" fill="none" stroke="#16273a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M308 394 H334 A13 13 0 0 1 308 394 Z" fill="#16273a"/>
+
+  <!-- 2. Winking (bottom) -->
+  <circle cx="211" cy="392" r="30" fill="#57b2ff" stroke="#fff7fb" stroke-width="4"/>
+  <circle cx="201" cy="386" r="3.5" fill="#16273a"/>
+  <path d="M215 386 q5 -4 10 0" fill="none" stroke="#16273a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M199 400 q11 9 22 0" fill="none" stroke="#16273a" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- 3. Tongue out (bottom left) -->
+  <circle cx="134" cy="315" r="30" fill="#b48cf2" stroke="#fff7fb" stroke-width="4"/>
+  <circle cx="124" cy="309" r="3.5" fill="#16273a"/>
+  <circle cx="144" cy="309" r="3.5" fill="#16273a"/>
+  <path d="M124 323 H144" fill="none" stroke="#16273a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M131 323 V331 A4 4 0 0 0 139 331 V323 Z" fill="#ff6ba1"/>
+
+  <!-- 4. Name tag: everyone starts as a stranger (left) -->
+  <circle cx="143" cy="205" r="30" fill="#4fd1a5" stroke="#fff7fb" stroke-width="4"/>
+  <circle cx="133" cy="199" r="3.5" fill="#16273a"/>
+  <circle cx="153" cy="199" r="3.5" fill="#16273a"/>
+  <path d="M133 213 q10 9 20 0" fill="none" stroke="#16273a" stroke-width="3" stroke-linecap="round"/>
+  <rect x="124" y="238" width="38" height="22" rx="4" fill="#ffffff" stroke="#ff4d8d" stroke-width="2.5"/>
+  <text x="143" y="254" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="13" text-anchor="middle" fill="#ff4d8d">HI!</text>
+
+  <!-- 5. Happy closed eyes (top) -->
+  <circle cx="233" cy="142" r="30" fill="#ffc857" stroke="#fff7fb" stroke-width="4"/>
+  <path d="M218 137 q5 -5 10 0 M238 137 q5 -5 10 0" fill="none" stroke="#16273a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M226 152 q7 7 14 0" fill="none" stroke="#16273a" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- 6. Party hat and shades: the one who organised it (top right) -->
+  <circle cx="340" cy="170" r="30" fill="#ff8a65" stroke="#fff7fb" stroke-width="4"/>
+  <rect x="326" y="164" width="28" height="9" rx="3" fill="#16273a"/>
+  <path d="M330 180 q10 7 20 0" fill="none" stroke="#16273a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M328 146 L346 110 L354 146 Z" fill="#b48cf2" stroke="#fff7fb" stroke-width="2"/>
+  <circle cx="344" cy="126" r="3" fill="#ffffff"/>
+  <circle cx="348" cy="136" r="2.5" fill="#ffffff"/>
+  <circle cx="346" cy="108" r="5" fill="#ffc857"/>
+</svg>

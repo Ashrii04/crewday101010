@@ -111,7 +111,7 @@ export function QRScanner({ onScan, paused }: QRScannerProps) {
 
   return (
     <div className="space-y-3">
-      <div className="relative overflow-hidden rounded-card bg-ink-950">
+      <div className="relative overflow-hidden rounded-card bg-obsidian">
         <div id={REGION_ID} className="min-h-[260px] w-full [&_video]:!w-full [&_video]:object-cover" />
 
         {!active ? (

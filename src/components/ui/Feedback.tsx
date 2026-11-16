@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import clsx from 'clsx'
 import { AlertTriangle, Loader2, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { LogoMark } from '@/components/layout/Logo'
+import { CrewEmblem } from '@/components/layout/CrewEmblem'
 
 export function Spinner({ className }: { className?: string }) {
   return <Loader2 className={clsx('animate-spin text-brand-600', className)} aria-hidden />
@@ -11,24 +11,13 @@ export function Spinner({ className }: { className?: string }) {
 /**
  * Full-viewport loader used while auth resolves and between lazy routes.
  *
- * Deliberately the same mark, wordmark and sliding bar as the pre-React splash
- * in `index.html`, so a reload looks like one continuous load rather than two
- * different screens handing over.
+ * Only the finished emblem, breathing softly; the full assembly intro plays
+ * once per session in the pre-React splash, never on ordinary navigation.
  */
 export function LoadingScreen({ label }: { label?: string }) {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-4">
-      <LogoMark className="h-22 w-22 animate-pop" />
-
-      <p className="font-display text-xl font-extrabold tracking-tight">
-        <span className="text-brand-500">CREW</span>
-        <span className="text-sky-500">DAY</span>
-      </p>
-
-      <span className="h-1 w-30 overflow-hidden rounded-full bg-brand-100">
-        <span className="block h-full w-2/5 rounded-full bg-linear-to-r from-brand-500 to-sky-500 motion-safe:animate-[loading-slide_1.1s_ease-in-out_infinite]" />
-      </span>
-
+      <CrewEmblem className="h-20 w-20 motion-safe:animate-[emblem-breathe_2.4s_ease-in-out_infinite]" />
       {label ? <p className="text-sm font-medium text-ink-500">{label}</p> : null}
     </div>
   )
@@ -40,7 +29,7 @@ export function Skeleton({ className }: { className?: string }) {
 
 export function EventCardSkeleton() {
   return (
-    <div className="overflow-hidden rounded-card border border-ink-100 bg-white shadow-soft">
+    <div className="overflow-hidden rounded-card border border-ink-100 bg-surface shadow-soft">
       <Skeleton className="aspect-16/9 w-full rounded-none" />
       <div className="space-y-2 px-4 py-3.5">
         <Skeleton className="h-4 w-24" />
@@ -62,7 +51,7 @@ export function EmptyState({
   action?: ReactNode
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-ink-200 bg-white/70 px-6 py-14 text-center">
+    <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-ink-200 bg-surface/70 px-6 py-14 text-center">
       <div className="mb-3 text-4xl" aria-hidden>
         {emoji}
       </div>

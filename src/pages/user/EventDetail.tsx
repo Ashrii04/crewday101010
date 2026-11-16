@@ -163,7 +163,7 @@ export default function EventDetailPage() {
               <Link
                 to="/explore"
                 aria-label="Back to events"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-ink-800 shadow-soft backdrop-blur transition active:scale-95"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-surface/90 text-ink-800 shadow-soft backdrop-blur transition active:scale-95"
               >
                 <ArrowLeft size={19} aria-hidden />
               </Link>
@@ -171,7 +171,7 @@ export default function EventDetailPage() {
                 type="button"
                 onClick={() => void onShare()}
                 aria-label="Share this event"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-ink-800 shadow-soft backdrop-blur transition active:scale-95"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-surface/90 text-ink-800 shadow-soft backdrop-blur transition active:scale-95"
               >
                 <Share2 size={17} aria-hidden />
               </button>
@@ -180,7 +180,7 @@ export default function EventDetailPage() {
               <EventKindPill event={event} />
             </div>
             {event.featured ? (
-              <span className="absolute right-4 bottom-4 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-brand-600 shadow-soft backdrop-blur">
+              <span className="absolute right-4 bottom-4 rounded-full bg-surface/90 px-3 py-1.5 text-xs font-bold text-brand-600 shadow-soft backdrop-blur">
                 ⭐ Featured
               </span>
             ) : null}
@@ -393,7 +393,7 @@ export default function EventDetailPage() {
       {/* Mobile sticky action bar */}
       {!hasLiveRegistration && availability.canRegister ? (
         <div
-          className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-100 bg-white/95 px-4 pt-3 backdrop-blur-xl lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-100 bg-surface/95 px-4 pt-3 backdrop-blur-xl lg:hidden"
           style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 4.75rem)' }}
         >
           <div className="mx-auto flex max-w-lg items-center gap-3">

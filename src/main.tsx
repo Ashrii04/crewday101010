@@ -19,13 +19,27 @@ createRoot(container).render(
  * browser paint it — removing the splash any earlier flashes white between
  * the two.
  */
+/** Length of the logo-assembly intro; only waited for on the first load of a session. */
+const INTRO_MS = 2300
+let introSeen = true
+try {
+  introSeen = sessionStorage.getItem('cd-intro') === '1'
+  sessionStorage.setItem('cd-intro', '1')
+} catch {
+  // Storage blocked: skip the wait rather than risk holding the splash.
+}
+const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+const introWait = introSeen || reducedMotion ? 0 : Math.max(0, INTRO_MS - performance.now())
+
 requestAnimationFrame(() => {
   requestAnimationFrame(() => {
-    const splash = document.getElementById('splash')
-    if (!splash) return
-    splash.classList.add('is-done')
-    splash.addEventListener('transitionend', () => splash.remove(), { once: true })
-    // Belt and braces if the transition never fires (reduced motion, hidden tab).
-    window.setTimeout(() => splash.remove(), 800)
+    window.setTimeout(() => {
+      const splash = document.getElementById('splash')
+      if (!splash) return
+      splash.classList.add('is-done')
+      splash.addEventListener('transitionend', () => splash.remove(), { once: true })
+      // Belt and braces if the transition never fires (reduced motion, hidden tab).
+      window.setTimeout(() => splash.remove(), 800)
+    }, introWait)
   })
 })

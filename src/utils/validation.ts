@@ -131,6 +131,10 @@ export function authErrorMessage(code: string): string {
       return 'Network problem. Check your connection and try again.'
     case 'auth/requires-recent-login':
       return 'For your security, please sign in again before making this change.'
+    case 'auth/redirect-started':
+      return 'Confirm with Google on the page that opens, then tap delete again.'
+    case 'auth/operation-not-supported-in-this-environment':
+      return 'This sign in method is not supported in this browser. Try another browser or sign in with email.'
     case 'auth/operation-not-allowed':
       return 'This sign in method is not enabled for the project yet.'
     default:

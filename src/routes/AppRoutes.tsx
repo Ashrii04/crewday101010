@@ -16,6 +16,7 @@ import {
  * never reaches a member's phone, and the QR decoder only loads at check-in.
  */
 const LandingPage = lazy(() => import('@/pages/Landing'))
+const PlanCrewDayPage = lazy(() => import('@/pages/PlanCrewDay'))
 const LoginPage = lazy(() => import('@/pages/auth/Login'))
 const SignupPage = lazy(() => import('@/pages/auth/Signup'))
 const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPassword'))
@@ -32,6 +33,7 @@ const EditProfilePage = lazy(() => import('@/pages/user/EditProfile'))
 const SuggestEventPage = lazy(() => import('@/pages/user/SuggestEvent'))
 const SettingsPage = lazy(() => import('@/pages/user/Settings'))
 const NotificationsPage = lazy(() => import('@/pages/user/Notifications'))
+const PurchaseHistoryPage = lazy(() => import('@/pages/user/PurchaseHistory'))
 const NotFoundPage = lazy(() => import('@/pages/NotFound'))
 
 const AdminLoginPage = lazy(() => import('@/pages/admin/AdminLogin'))
@@ -69,6 +71,8 @@ export function AppRoutes() {
         />
         {/* The long-form marketing page, kept for sharing and for desktop. */}
         <Route path="/about" element={<LandingPage />} />
+        {/* Playful question flow that ends in matching events; open to guests. */}
+        <Route path="/plan" element={<PlanCrewDayPage />} />
         <Route
           path="/login"
           element={
@@ -131,6 +135,7 @@ export function AppRoutes() {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/settings/profile" element={<EditProfilePage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/purchases" element={<PurchaseHistoryPage />} />
         </Route>
 
         {/* Admin */}

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CrewDay logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff8fb8"/>
+      <stop offset="50%" stop-color="#b98cf5"/>
+      <stop offset="100%" stop-color="#6db8ff"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.35"/>
+    </linearGradient>
+    <linearGradient id="smile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff4d8d"/>
+      <stop offset="100%" stop-color="#8f6bea"/>
+    </linearGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="60"/>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#5b2a8c" flood-opacity="0.22"/>
+    </filter>
+    <clipPath id="clip"><rect width="512" height="512" rx="112"/></clipPath>
+  </defs>
+
+  <!-- Soft mesh-gradient background -->
+  <g clip-path="url(#clip)">
+    <rect width="512" height="512" fill="url(#bg)"/>
+    <circle cx="90" cy="80" r="150" fill="#ffc2a1" opacity="0.75" filter="url(#blur)"/>
+    <circle cx="450" cy="120" r="130" fill="#ff7fc0" opacity="0.55" filter="url(#blur)"/>
+    <circle cx="430" cy="450" r="160" fill="#5fd3ff" opacity="0.6" filter="url(#blur)"/>
+    <circle cx="70" cy="460" r="130" fill="#9a7bff" opacity="0.55" filter="url(#blur)"/>
+  </g>
+
+  <!-- The crew: six overlapping glass circles forming a C -->
+  <g filter="url(#soft)" fill="url(#glass)" stroke="#ffffff" stroke-opacity="0.9" stroke-width="3">
+    <circle cx="340.9" cy="171.1" r="58"/>
+    <circle cx="237.2" cy="137.5" r="58"/>
+    <circle cx="149.1" cy="201.5" r="58"/>
+    <circle cx="149.1" cy="310.5" r="58"/>
+    <circle cx="237.2" cy="374.5" r="58"/>
+    <circle cx="340.9" cy="340.9" r="58"/>
+  </g>
+
+  <!-- You: the one who completes the circle -->
+  <g filter="url(#soft)">
+    <circle cx="382" cy="256" r="34" fill="#ffffff"/>
+    <circle cx="371" cy="250" r="4" fill="url(#smile)"/>
+    <circle cx="393" cy="250" r="4" fill="url(#smile)"/>
+    <path d="M369 262 q13 12 26 0" fill="none" stroke="url(#smile)" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Sparkle -->
+  <path d="M408 96 L413 114 L431 119 L413 124 L408 142 L403 124 L385 119 L403 114Z" fill="#ffffff" opacity="0.95"/>
+  <circle cx="436" cy="150" r="4" fill="#ffffff" opacity="0.85"/>
+</svg>

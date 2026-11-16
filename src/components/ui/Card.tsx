@@ -11,7 +11,7 @@ export function Card({
   as?: 'div' | 'section' | 'article' | 'li'
 }) {
   return (
-    <Tag className={clsx('rounded-card bg-white shadow-soft ring-1 ring-ink-100/70', className)}>
+    <Tag className={clsx('rounded-card bg-surface shadow-soft ring-1 ring-ink-100/70', className)}>
       {children}
     </Tag>
   )

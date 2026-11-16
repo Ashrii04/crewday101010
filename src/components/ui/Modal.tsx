@@ -50,7 +50,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
       <button
         type="button"
         aria-label="Close dialog"
-        className="absolute inset-0 animate-fade-in bg-ink-950/50 backdrop-blur-[2px]"
+        className="absolute inset-0 animate-fade-in bg-obsidian/50 backdrop-blur-[2px]"
         onClick={onClose}
       />
       <div
@@ -60,7 +60,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
         aria-label={title}
         tabIndex={-1}
         className={clsx(
-          'relative max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl bg-white p-5 shadow-lift outline-none animate-fade-up sm:rounded-3xl sm:p-6',
+          'relative max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl bg-surface p-5 shadow-lift outline-none animate-fade-up sm:rounded-3xl sm:p-6',
           widths[size],
         )}
       >
