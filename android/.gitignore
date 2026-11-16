@@ -52,8 +52,8 @@ captures/
 # Comment next line if keeping position of elements in Navigation Editor is relevant for you
 .idea/navEditor.xml
 
-# Keystore files
-# Uncomment the following lines if you do not want to check your keystore files in.
+# Keystore files. The upload key and its passwords never go into git: losing
+# control of them means losing control of the Play listing.
 *.jks
 *.keystore
 keystore.properties

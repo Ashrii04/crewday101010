@@ -294,13 +294,24 @@ with Firebase:
    `cd android && gradlew signingReport` (look for `Variant: debug`), or from
    Android Studio: Gradle panel -> app -> Tasks -> android -> signingReport.
    Without it Google sign-in fails with `DEVELOPER_ERROR` / error code 10.
+   The Firebase CLI can do it without the console:
+   ```bash
+   firebase apps:android:sha:create 1:695634314665:android:e015bc44d3f555d1caf0b8 <SHA-1>
+   firebase apps:sdkconfig ANDROID 1:695634314665:android:e015bc44d3f555d1caf0b8 > android/app/google-services.json
+   ```
 3. **Download `google-services.json`** and put it at
-   `android/app/google-services.json`. The Gradle build applies the Google
-   Services plugin only when this file exists, so the app builds either way.
-4. `npm run android:sync` and run again.
+   `android/app/google-services.json`. It must contain an `oauth_client` entry
+   with `client_type: 1` (the Android client) -- if it only has `client_type: 3`
+   the SHA-1 was not registered when it was downloaded.
+4. **`rgcfaIncludeGoogle = true` in `android/variables.gradle`.** The
+   `@capacitor-firebase/authentication` plugin compiles its Google provider
+   only when that flag is set; without it every tap on *Continue with Google*
+   is rejected with "Google Sign-In is not enabled" even with everything
+   else in place. Already set in this repo.
+5. `npm run android:sync` and run again.
 
 Before publishing, add the release keystore's SHA-1 too, and the Play
-App Signing certificate's SHA-1 once Play generates it.
+App Signing certificate's SHA-1 once Play generates it (see PLAY_STORE.md).
 
 ### Release build (Google Play)
 
@@ -541,7 +552,8 @@ Firestore region.
 
 ## Paid events
 
-Phase 1 is deliberately free-first, but the architecture is already in place:
+Paid events are settled through **Razorpay**. The flow keeps every decision
+about money on the server:
 
 - Admins set any price. `₹0` renders as **FREE** everywhere.
 - A registration for a paid event is created as `pending_payment` /
@@ -549,9 +561,28 @@ Phase 1 is deliberately free-first, but the architecture is already in place:
   rules make it impossible for a client to write `paid` or `confirmed`.
 - The seat is held while payment is pending, so a paid event cannot oversell
   during checkout.
-- To add Razorpay (or any provider): call `confirmPaidRegistration()` from a
-  **verified server-side webhook** (a Cloud Function), never from the browser,
-  and tighten the registration update rule to admin-only for `paymentStatus`.
+- Members pay in one of two ways, both shown on the registration success screen
+  and the ticket (`src/components/payments/PaymentPanel.tsx`):
+  - **UPI**: a `upi://pay` link and QR for the organiser's UPI id. The organiser
+    checks their bank app and taps **Mark paid** (`/admin/payments`,
+    attendee list), which confirms the seat.
+  - **Online (Razorpay)**: `api/razorpay-order.ts` (a Vercel API route, no
+    Firebase Blaze plan needed) creates the order from the event price,
+    Razorpay Checkout opens on it, and `api/razorpay-webhook.ts` verifies the
+    HMAC signature and confirms the seat. The browser never sends an amount and
+    never marks anything paid. Off until `VITE_ONLINE_PAYMENTS=true`; setup is
+    in `docs/razorpay-setup.md`.
+  - Both paths go through one idempotent transaction, so a payment reported twice
+    confirms once. `functions/src/payments.ts` is a dormant Cloud Functions
+    version of the Razorpay route for if the project moves to Blaze.
+
+### Setting up Razorpay
+
+Follow `docs/razorpay-setup.md`: server-only keys and the webhook secret go into
+the Vercel project's environment, the Razorpay dashboard webhook points at
+`https://rooman-books.momsmagic.shop/api/razorpay-webhook` (events
+`payment.captured`, `order.paid`), and `VITE_ONLINE_PAYMENTS=true` switches the
+button on. Until then the UPI option works on its own and nothing breaks on Spark.
 
 Revenue reporting on the dashboard stays hidden until at least one paid event
 exists.

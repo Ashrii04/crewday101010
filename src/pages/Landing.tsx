@@ -244,6 +244,9 @@ export default function LandingPage() {
             <Link to="/privacy" className="hover:text-ink-900">
               Privacy
             </Link>
+            <Link to="/delete-account" className="hover:text-ink-900">
+              Delete account
+            </Link>
             <Link to="/admin/login" className="hover:text-ink-900">
               Organiser login
             </Link>

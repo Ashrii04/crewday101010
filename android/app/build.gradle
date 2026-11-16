@@ -1,5 +1,19 @@
-apply plugin: 'com.android.application'
+plugins {
+    id("com.android.application")
+    id("com.google.gms.google-services")
+}
 
+/**
+ * Release signing.
+ *
+ * Play Console only accepts an upload signed with *your* key, and that key can
+ * never be replaced once the app is live — so its details live in
+ * `android/keystore.properties`, which is gitignored and never leaves this
+ * machine (or in CREWDAY_* environment variables). Without either, the release
+ * build is left unsigned, so a fresh clone still builds but Play will reject it.
+ *
+ * See PLAY_STORE.md for how to create the keystore.
+ */
 // Release signing credentials: android/keystore.properties (untracked) first,
 // then environment variables. If neither is present the release build is
 // simply left unsigned -- configuration never fails.
@@ -18,13 +32,13 @@ def releaseKeyAlias = signingValue('keyAlias', 'CREWDAY_KEY_ALIAS')
 def releaseKeyPassword = signingValue('keyPassword', 'CREWDAY_KEY_PASSWORD')
 def hasReleaseSigning = releaseStoreFile && releaseStorePassword && releaseKeyAlias && releaseKeyPassword
 
-// Defaults are the current release; override per build with
-// -PversionCode=3 -PversionName=1.1.1. Play needs a higher versionCode on every
+// Defaults are the current release (versionCode 2 is already on Play); override per build with
+// -PversionCode=4 -PversionName=1.3. Play needs a higher versionCode on every
 // upload, so bump the code here (and package.json's version) with each release.
 // Computed up front: `versionCode (expr).toInteger()` would be parsed by Groovy as
 // a call to versionCode(...) followed by .toInteger() on its null result.
-def appVersionCode = (project.findProperty('versionCode') ?: '2').toString().toInteger()
-def appVersionName = (project.findProperty('versionName') ?: '1.1.0').toString()
+def appVersionCode = (project.findProperty('versionCode') ?: '3').toString().toInteger()
+def appVersionName = (project.findProperty('versionName') ?: '1.2').toString()
 
 android {
     namespace = "app.crewday"
@@ -75,6 +89,9 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:34.19.0')
+
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
@@ -86,12 +103,3 @@ dependencies {
 }
 
 apply from: 'capacitor.build.gradle'
-
-try {
-    def servicesJSON = file('google-services.json')
-    if (servicesJSON.text) {
-        apply plugin: 'com.google.gms.google-services'
-    }
-} catch(Exception e) {
-    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
-}

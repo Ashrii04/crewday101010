@@ -1,40 +1,6 @@
 /**
  * CrewDay — Razorpay online payments
- * ============================================================================
- *
- * DORMANT. The project is on the Spark plan, so none of this is deployed; it
- * is written and tested so payments can go live the day the owner upgrades to
- * Blaze. See docs/razorpay-setup.md for the go-live steps. It has not been run
- * against real Razorpay.
- *
- * Flow:
- *   1. The member registers for a paid event; the client writes a registration
- *      with `pending_payment` / `pending`.
- *   2. `createRazorpayOrder` creates a Razorpay order for the EVENT's price and
- *      stores the order id on the registration.
- *   3. After Checkout succeeds, Razorpay calls `razorpayWebhook`. Only that
- *      webhook — the Admin SDK, after verifying the signature and re-checking
- *      the amount — confirms the registration. The browser never does.
- *
- * Secrets come from Secret Manager via `defineSecret`; nothing is in the repo.
- */
-
-import { getApps, initializeApp } from 'firebase-admin/app'
-import { FieldValue, getFirestore } from 'firebase-admin/firestore'
-import { logger } from 'firebase-functions'
-import { defineSecret } from 'firebase-functions/params'
-import { HttpsError, onCall, onRequest } from 'firebase-functions/v2/https'
-import {
-  CURRENCY,
-  MIN_ORDER_PAISE,
-  extractPaymentEntity,
-  paymentMismatchReason,
-  toPaise,
-  verifyWebhookSignature,
-  type PaymentEntity,
-  type PaymentMismatch,
-} from './razorpay'
-
+ * =====================================================================
 const RAZORPAY_KEY_ID = defineSecret('RAZORPAY_KEY_ID')
 const RAZORPAY_KEY_SECRET = defineSecret('RAZORPAY_KEY_SECRET')
 const RAZORPAY_WEBHOOK_SECRET = defineSecret('RAZORPAY_WEBHOOK_SECRET')

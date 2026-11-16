@@ -67,12 +67,57 @@ function assertNotSuspended(profile: UserProfile | null): void {
  */
 async function nativeGoogleCredential(): Promise<AuthCredential> {
   const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication')
-  const result = await FirebaseAuthentication.signInWithGoogle({ skipNativeAuth: true })
+  let result: Awaited<ReturnType<typeof FirebaseAuthentication.signInWithGoogle>>
+  try {
+    result = await FirebaseAuthentication.signInWithGoogle({ skipNativeAuth: true })
+  } catch (caught) {
+    throw translateNativeGoogleError(caught)
+  }
   const idToken = result.credential?.idToken
   if (!idToken) {
     throw new AuthError('auth/popup-closed-by-user', 'Google sign-in was cancelled.')
   }
   return GoogleAuthProvider.credential(idToken, result.credential?.accessToken)
+}
+
+/**
+ * The native plugin rejects with Google Play Services status codes baked into
+ * the message rather than Firebase `auth/*` codes, so the login screen would
+ * otherwise print "10: " or "12501: " verbatim. Map the ones people hit.
+ */
+function translateNativeGoogleError(caught: unknown): Error {
+  const message = String((caught as { message?: string })?.message ?? caught ?? '')
+  // Credential Manager reports a signing-certificate mismatch as a
+  // *cancellation* ("[16] Account reauth failed"), so catch it before the real
+  // cancel check or it reads as the user backing out.
+  if (/reauth failed/i.test(message)) {
+    return new AuthError(
+      'auth/native-misconfigured',
+      'Google sign-in is not set up for this build of the app yet. Sign in with email, or contact support.',
+    )
+  }
+  // 12501 = SIGN_IN_CANCELLED, 16 = CANCELED (sheet dismissed / no account chosen).
+  if (/\b(12501|16)\b/.test(message) || /cancel/i.test(message)) {
+    return new AuthError('auth/popup-closed-by-user', 'Sign in was cancelled.')
+  }
+  // 10 = DEVELOPER_ERROR: the APK's signing SHA-1 is not registered in Firebase.
+  if (/10/.test(message) || /developer/i.test(message)) {
+    return new AuthError(
+      'auth/native-misconfigured',
+      'Google sign-in is not set up for this build of the app yet. Sign in with email, or contact support.',
+    )
+  }
+  // 7 = NETWORK_ERROR.
+  if (/7/.test(message) || /network/i.test(message)) {
+    return new AuthError('auth/network-request-failed', 'Network problem. Check your connection and try again.')
+  }
+  if (/not enabled|not available/i.test(message)) {
+    return new AuthError(
+      'auth/native-misconfigured',
+      'Google sign-in is not available in this build of the app. Sign in with email instead.',
+    )
+  }
+  return caught instanceof Error ? caught : new AuthError('auth/native-failed', message || 'Google sign-in failed.')
 }
 
 async function googleSignIn(): Promise<UserCredential> {

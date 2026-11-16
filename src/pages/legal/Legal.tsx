@@ -60,7 +60,12 @@ export function TermsPage() {
         <p>
           You must be at least 18 years old to use CrewDay. You are responsible for the accuracy of
           the details on your profile and for keeping your sign-in credentials secure, and you may
-          not impersonate another person.
+          not impersonate another person. You can delete your account at any time from Settings
+          or via the{' '}
+          <Link to="/delete-account" className="font-semibold text-brand-600 hover:underline">
+            delete account page
+          </Link>
+          .
         </p>
       </section>
       <section>
@@ -80,9 +85,12 @@ export function TermsPage() {
       <section>
         <h2>4. Paid events</h2>
         <p>
-          Event prices are set by the organiser and shown before you register. A registration for a
-          paid event is only confirmed once payment has been completed. Refunds for paid events are
-          handled by the organiser under the terms shown on the event.
+          Event prices are set by the organiser and shown before you register. Payments are
+          processed by Razorpay; CrewDay never sees or stores your card, UPI or bank details. A
+          registration for a paid event is only confirmed once Razorpay reports the payment as
+          successful. If you cancel a paid registration, or the organiser cancels the event,
+          refunds are handled by the organiser under the terms shown on the event and returned to
+          the original payment method.
         </p>
       </section>
       <section>
@@ -103,7 +111,17 @@ export function TermsPage() {
         <h2>7. Changes</h2>
         <p>
           We may update these terms as the product grows. Significant changes will be announced in
-          the app.
+          the app. These terms are governed by the laws of India.
+        </p>
+      </section>
+      <section>
+        <h2>8. Contact</h2>
+        <p>
+          Questions about these terms:{' '}
+          <a href={'mailto:' + SUPPORT_EMAIL} className="font-semibold text-brand-600 hover:underline">
+            {SUPPORT_EMAIL}
+          </a>
+          .
         </p>
       </section>
     </LegalShell>

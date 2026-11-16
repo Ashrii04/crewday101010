@@ -1,7 +1,7 @@
 {
   "name": "crew-day-app",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -28,6 +28,8 @@
     "android:open": "npx cap open android",
     "android:run": "npm run android:sync && npx cap run android",
     "android:apk": "npm run android:sync && cd android && gradlew assembleDebug",
+    "android:assets": "node scripts/make-app-assets.mjs && npx @capacitor/assets generate --android",
+    "android:apk:release": "npm run android:sync && cd android && gradlew assembleRelease",
     "android:bundle": "npm run android:sync && cd android && gradlew bundleRelease"
   },
   "dependencies": {

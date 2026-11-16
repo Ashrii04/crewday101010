@@ -70,6 +70,7 @@ export function mapRegistration(
     currency: data.currency ?? 'INR',
     paymentStatus: (data.paymentStatus as PaymentStatus) ?? 'not_required',
     registrationStatus: (data.registrationStatus as RegistrationStatus) ?? 'confirmed',
+    payment: data.payment ?? undefined,
     qrToken: data.qrToken ?? '',
     attendanceStatus: (data.attendanceStatus as AttendanceStatus) ?? 'not_checked_in',
     registeredAt: data.registeredAt ?? null,
