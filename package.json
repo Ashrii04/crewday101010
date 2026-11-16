@@ -10,6 +10,7 @@
     "typecheck": "tsc -b --force",
     "lint": "oxlint",
     "emulators": "firebase emulators:start",
+    "emulators:lan": "node scripts/emulators-lan.mjs",
     "deploy:hosting": "npm run build && firebase deploy --only hosting",
     "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes,storage",
     "deploy:functions": "firebase deploy --only functions",

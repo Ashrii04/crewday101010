@@ -138,7 +138,7 @@ export function PaymentPanel({
       <div className="space-y-4">
         <a
           href={link}
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-brand-500 px-5 text-[0.95rem] font-semibold text-white shadow-pink transition hover:bg-brand-600 active:scale-[0.98]"
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-sky-400 to-brand-500 px-5 text-[0.95rem] font-semibold text-white shadow-gold transition hover:from-sky-500 hover:to-brand-600 active:scale-[0.98]"
         >
           <Smartphone size={18} aria-hidden />
           Pay with UPI app
@@ -192,7 +192,7 @@ export function PaymentPanel({
 
       <div className="mt-4">{upiOption}</div>
 
-      <p className="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-sm text-sky-700">
+      <p className="mt-4 rounded-2xl bg-brand-50 px-4 py-3 text-sm text-brand-700">
         Your seat is held for you. It is confirmed once the organiser sees your payment and marks it
         as received, then your QR code activates here automatically. Keep your registration ID in
         the payment note so they can match it.
