@@ -3,7 +3,7 @@ import { Logo } from '@/components/layout/Logo'
 
 export default function NotFoundPage() {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-6 bg-ink-50 px-6 text-center">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center">
       <Logo />
       <div>
         <p className="font-display text-6xl font-extrabold text-brand-600">404</p>

@@ -9,7 +9,7 @@ import {
 import clsx from 'clsx'
 
 const CONTROL =
-  'w-full rounded-2xl border bg-white px-4 text-[0.95rem] text-ink-900 placeholder:text-ink-400 transition outline-none disabled:bg-ink-100 disabled:text-ink-500'
+  'w-full rounded-2xl border bg-surface px-4 text-[0.95rem] text-ink-900 placeholder:text-ink-400 transition outline-none disabled:bg-ink-100 disabled:text-ink-500'
 const CONTROL_OK = 'border-ink-200 focus:border-brand-400 focus:ring-4 focus:ring-brand-100'
 const CONTROL_BAD = 'border-sunset-400 focus:border-sunset-500 focus:ring-4 focus:ring-sunset-100'
 
@@ -175,7 +175,7 @@ export function Toggle({ checked, onChange, label, description, disabled }: Togg
   return (
     <label
       className={clsx(
-        'flex items-start justify-between gap-4 rounded-2xl border border-ink-200 bg-white p-4',
+        'flex items-start justify-between gap-4 rounded-2xl border border-ink-200 bg-surface p-4',
         disabled ? 'opacity-60' : 'cursor-pointer hover:border-brand-200',
       )}
     >
@@ -192,7 +192,7 @@ export function Toggle({ checked, onChange, label, description, disabled }: Togg
           onChange={(event) => onChange(event.target.checked)}
         />
         <span className="h-6 w-11 rounded-full bg-ink-300 transition peer-checked:bg-brand-600 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-100" />
-        <span className="pointer-events-none absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5" />
+        <span className="pointer-events-none absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-surface shadow transition peer-checked:translate-x-5" />
       </span>
     </label>
   )

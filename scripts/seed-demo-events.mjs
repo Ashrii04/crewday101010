@@ -23,12 +23,14 @@ const argOf = (name) => {
   return index === -1 ? undefined : args[index + 1]
 }
 const UNDO = args.includes('--undo')
-const email = argOf('email') ?? process.env.CREWDAY_ADMIN_EMAIL
-const password = argOf('password') ?? process.env.CREWDAY_ADMIN_PASSWORD
+// --emulator: write to the LOCAL Firebase emulators (demo project) only.
+const EMULATOR = args.includes('--emulator')
+const email = argOf('email') ?? process.env.CREWDAY_ADMIN_EMAIL ?? (EMULATOR ? 'admin@crewday.local' : undefined)
+const password = argOf('password') ?? process.env.CREWDAY_ADMIN_PASSWORD ?? (EMULATOR ? 'Admin12345!' : undefined)
 
 if (!email || !password) {
   console.error(
-    'Usage: node scripts/seed-demo-events.mjs --email <organiser email> --password <password> [--undo]',
+    'Usage: node scripts/seed-demo-events.mjs --email <organiser email> --password <password> [--undo] [--emulator]',
   )
   process.exit(1)
 }
@@ -44,14 +46,18 @@ function readEnvLocal() {
   return config
 }
 
-const env = readEnvLocal()
-const API_KEY = env.VITE_FIREBASE_API_KEY
-const PROJECT = env.VITE_FIREBASE_PROJECT_ID
+const env = EMULATOR ? {} : readEnvLocal()
+const API_KEY = EMULATOR ? 'demo-api-key' : env.VITE_FIREBASE_API_KEY
+const PROJECT = EMULATOR ? 'demo-crewday' : env.VITE_FIREBASE_PROJECT_ID
 if (!API_KEY || !PROJECT) {
   console.error('Missing VITE_FIREBASE_API_KEY / VITE_FIREBASE_PROJECT_ID in .env.local')
   process.exit(1)
 }
-const DOCS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`
+const FIRESTORE_ORIGIN = EMULATOR ? 'http://127.0.0.1:8080' : 'https://firestore.googleapis.com'
+const AUTH_ORIGIN = EMULATOR
+  ? 'http://127.0.0.1:9099/identitytoolkit.googleapis.com'
+  : 'https://identitytoolkit.googleapis.com'
+const DOCS = `${FIRESTORE_ORIGIN}/v1/projects/${PROJECT}/databases/(default)/documents`
 
 /* --------------------------------- Dates --------------------------------- */
 
@@ -109,6 +115,31 @@ function buildSearchTokens({ title, venue, category, city, area, tags = [] }) {
  * only for seeded demo data.
  */
 const IMG = (tags, lock) => `https://loremflickr.com/800/500/${tags}?lock=${lock}`
+
+/**
+ * Hand-checked Unsplash photos (free licence) for the LOCAL emulator demo.
+ * LoremFlickr was returning server errors, which left cards and the landing
+ * collage with broken images.
+ */
+const LOCAL_PHOTOS = {
+  "Sunday Guitar Jam": 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=900&q=70&auto=format&fit=crop',
+  "Sunrise Trek: Nandi Hills": 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=900&q=70&auto=format&fit=crop',
+  "Badminton Doubles Night": 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=900&q=70&auto=format&fit=crop',
+  "Street Photography Walk": 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=900&q=70&auto=format&fit=crop',
+  "Open Mic: Poetry & Song": 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=900&q=70&auto=format&fit=crop',
+  "Sunday Football 7s": 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900&q=70&auto=format&fit=crop',
+  "Diwali CrewDay": 'https://images.unsplash.com/photo-1605292356183-a77d0a9c9d1d?w=900&q=70&auto=format&fit=crop',
+  "Board Game Night": 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=900&q=70&auto=format&fit=crop',
+  "Beginner Salsa Social": 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=900&q=70&auto=format&fit=crop',
+  "Cycling: Turahalli Loop": 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=900&q=70&auto=format&fit=crop',
+  "Pottery Workshop: Throw a Bowl": 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=900&q=70&auto=format&fit=crop',
+  "Book Club: Science Fiction": 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900&q=70&auto=format&fit=crop',
+  "Karaoke Night: Sing Your Heart Out": 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=900&q=70&auto=format&fit=crop',
+  "Saturday DJ Night: Afro House": 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=900&q=70&auto=format&fit=crop',
+  "Bollywood Dance Party": 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=900&q=70&auto=format&fit=crop',
+  "Rooftop Sundowner Party": 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=70&auto=format&fit=crop',
+  "FIFA & Mario Kart Tournament": 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=900&q=70&auto=format&fit=crop',
+}
 
 const EVENTS = [
   {
@@ -451,7 +482,7 @@ const ts = (value) => ({ timestampValue: value })
 
 async function signIn() {
   const response = await fetch(
-    `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+    `${AUTH_ORIGIN}/v1/accounts:signInWithPassword?key=${API_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -473,7 +504,7 @@ function toFirestoreFields(event, uid) {
   return {
     title: str(event.title),
     description: str(event.description),
-    imageURL: str(''),
+    imageURL: str(EMULATOR ? (LOCAL_PHOTOS[event.title] ?? IMG(event.image, event.lock)) : ''),
     imagePath: str(''),
     category: str(event.category),
     date: str(event.date),
@@ -549,7 +580,7 @@ if (UNDO) {
     process.exit(0)
   }
   for (const event of existing) {
-    const response = await fetch(`https://firestore.googleapis.com/v1/${event.path}`, {
+    const response = await fetch(`${FIRESTORE_ORIGIN}/v1/${event.path}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     })

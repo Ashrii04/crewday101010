@@ -28,7 +28,7 @@ export function QRTicket({ registration }: { registration: Registration }) {
     registration.attendanceStatus !== 'checked_in'
 
   return (
-    <div className="overflow-hidden rounded-card bg-white shadow-lift ring-1 ring-ink-100/70">
+    <div className="overflow-hidden rounded-card bg-surface shadow-lift ring-1 ring-ink-100/70">
       {registration.eventImageURL ? (
         <div className="relative h-40 overflow-hidden bg-ink-100">
           <img src={registration.eventImageURL} alt="" className="h-full w-full object-cover" />
@@ -56,8 +56,8 @@ export function QRTicket({ registration }: { registration: Registration }) {
 
       {/* Perforation */}
       <div className="relative mt-5 h-6">
-        <span className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#fdf7fb]" />
-        <span className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#fdf7fb]" />
+        <span className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#eee3ff]" />
+        <span className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#eee3ff]" />
         <span className="absolute inset-x-5 top-1/2 border-t-2 border-dashed border-ink-200" />
       </div>
 
@@ -65,7 +65,7 @@ export function QRTicket({ registration }: { registration: Registration }) {
         <div
           className={
             scannable
-              ? 'rounded-3xl bg-linear-to-br from-brand-50 via-grape-50 to-sky-50 p-6 shadow-soft'
+              ? 'rounded-3xl bg-[#fffdf8] p-6 shadow-soft'
               : 'rounded-3xl bg-ink-100 p-6 opacity-40 grayscale'
           }
         >

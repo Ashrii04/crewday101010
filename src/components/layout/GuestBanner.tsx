@@ -14,7 +14,7 @@ export function GuestBanner() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-4">
-      <div className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-soft ring-1 ring-brand-100">
+      <div className="flex items-center gap-3 rounded-2xl bg-surface px-4 py-3 shadow-soft ring-1 ring-brand-100">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-500">
           <UserRound size={18} aria-hidden />
         </span>
@@ -24,7 +24,7 @@ export function GuestBanner() {
         </p>
         <Link
           to="/signup"
-          className="shrink-0 rounded-full bg-brand-500 px-3.5 py-2 text-xs font-bold text-white shadow-pink"
+          className="shrink-0 rounded-full bg-brand-500 px-3.5 py-2 text-xs font-bold text-white shadow-gold"
         >
           Save
         </Link>

@@ -241,7 +241,7 @@ export default function RegisterForEventPage() {
                       'rounded-2xl border-2 p-4 text-left transition',
                       active
                         ? 'border-brand-600 bg-brand-50'
-                        : 'border-ink-200 bg-white hover:border-brand-300',
+                        : 'border-ink-200 bg-surface hover:border-brand-300',
                     )}
                   >
                     <span className="text-2xl" aria-hidden>

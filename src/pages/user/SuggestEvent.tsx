@@ -344,8 +344,8 @@ export default function SuggestEventPage() {
                   className={clsx(
                     'rounded-2xl px-2 py-3 text-center text-sm font-semibold transition',
                     draft.eventTypes[0] === option.value
-                      ? 'bg-brand-500 text-white shadow-pink'
-                      : 'bg-white text-ink-700 ring-1 ring-ink-200 hover:ring-brand-300',
+                      ? 'bg-brand-500 text-white shadow-gold'
+                      : 'bg-surface text-ink-700 ring-1 ring-ink-200 hover:ring-brand-300',
                   )}
                 >
                   <span className="block text-lg" aria-hidden>

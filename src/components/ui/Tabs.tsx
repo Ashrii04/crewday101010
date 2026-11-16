@@ -33,7 +33,7 @@ export function Tabs<T extends string>({
             onClick={() => onChange(item.value)}
             className={clsx(
               'flex-1 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition',
-              active ? 'bg-white text-ink-900 shadow-soft' : 'text-ink-500 hover:text-ink-800',
+              active ? 'bg-surface text-ink-900 shadow-soft' : 'text-ink-500 hover:text-ink-800',
             )}
           >
             {item.label}
@@ -69,7 +69,7 @@ export function Chip({
         'whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold transition',
         active
           ? 'border-brand-600 bg-brand-600 text-white shadow-soft'
-          : 'border-ink-200 bg-white text-ink-700 hover:border-brand-300 hover:bg-brand-50',
+          : 'border-ink-200 bg-surface text-ink-700 hover:border-brand-300 hover:bg-brand-50',
         className,
       )}
     >

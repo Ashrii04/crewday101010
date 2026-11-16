@@ -7,6 +7,7 @@ import {
   linkWithPopup,
   reauthenticateWithCredential,
   reauthenticateWithPopup,
+  reauthenticateWithRedirect,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInAnonymously,
@@ -227,6 +228,12 @@ export function usesPasswordProvider(user: User | null): boolean {
   return Boolean(user?.providerData.some((provider) => provider.providerId === 'password'))
 }
 
+const REDIRECT_FALLBACK_CODES = new Set([
+  'auth/popup-blocked',
+  'auth/operation-not-supported-in-this-environment',
+  'auth/web-storage-unsupported',
+])
+
 /**
  * Re-authenticate before a destructive action. Firebase requires a recent
  * login to delete an account, and the flow differs per provider.
@@ -242,7 +249,25 @@ async function reauthenticate(user: User, password?: string): Promise<void> {
     await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, password))
     return
   }
-  await googleReauthenticate(user)
+  // The native Android shell has its own Google credential flow; keep it.
+  if (isNativeApp) {
+    await googleReauthenticate(user)
+    return
+  }
+  // Popups are blocked or unsupported on phones and in the Android wrapper.
+  // Fall back to a full-page redirect; the user taps delete again once back.
+  const isTouch = typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches
+  if (!isTouch) {
+    try {
+      await reauthenticateWithPopup(user, googleProvider)
+      return
+    } catch (caught) {
+      const code = (caught as { code?: string }).code ?? ''
+      if (!REDIRECT_FALLBACK_CODES.has(code)) throw caught
+    }
+  }
+  await reauthenticateWithRedirect(user, googleProvider)
+  throw new AuthError('auth/redirect-started', 'Confirm with Google on the page that opens, then tap delete again.')
 }
 
 export interface DeleteAccountResult {

@@ -19,8 +19,8 @@ function SupportContact() {
 
 function LegalShell({ title, updated, children }: { title: string; updated: string; children: ReactNode }) {
   return (
-    <div className="min-h-dvh bg-ink-50">
-      <header className="border-b border-ink-100 bg-white">
+    <div className="min-h-dvh">
+      <header className="border-b border-ink-100 bg-surface">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-4">
           <Link to="/">
             <Logo />
@@ -112,7 +112,7 @@ export function TermsPage() {
 
 export function PrivacyPage() {
   return (
-    <LegalShell title="Privacy Policy" updated="15 November 2026">
+    <LegalShell title="Privacy Policy" updated="16 November 2026">
       <section>
         <p>
           This policy explains what CrewDay collects, why, who can see it, and how you can have it
@@ -167,6 +167,11 @@ export function PrivacyPage() {
             door. Images from the camera are read on your device and are not saved or uploaded.
           </li>
         </ul>
+        <p>
+          We do not collect your precise location. We never see or store your UPI PIN, bank account
+          or card details; payments are handled by your UPI app or by Razorpay, and we keep only the
+          payment status, method and reference.
+        </p>
       </section>
       <section>
         <h2>2. How we use it</h2>
@@ -190,7 +195,11 @@ export function PrivacyPage() {
             CrewDay administrators can see profiles, registrations, suggestions and problem reports
             in order to run the service and respond to you.
           </li>
+          <li>
+            <strong>Legal reasons</strong> — we may disclose information if the law requires it.
+          </li>
         </ul>
+        <p>We do not share your personal data with advertisers or data brokers.</p>
       </section>
       <section>
         <h2>4. Service providers</h2>
@@ -254,7 +263,8 @@ export function PrivacyPage() {
         <h2>7. Your choices</h2>
         <p>
           You can view and change your profile in Settings, switch notifications and visibility
-          options off, and ask us for a copy of your data or its correction or deletion at any time.
+          options off (in the app or in your phone's settings), and ask us for a copy of your data
+          or its correction or deletion at any time. We will respond within 30 days.
         </p>
       </section>
       <section>
@@ -274,7 +284,15 @@ export function PrivacyPage() {
         </p>
       </section>
       <section>
-        <h2>10. Changes and contact</h2>
+        <h2>10. International transfers</h2>
+        <p>
+          Our database is hosted in Mumbai, India. Our service providers (Google, Vercel and
+          Razorpay) may process data in other countries and apply their own safeguards to those
+          transfers under their privacy terms.
+        </p>
+      </section>
+      <section>
+        <h2>11. Changes and contact</h2>
         <p>
           We will announce significant changes to this policy in the app. Questions about your data,
           or requests to access, correct or delete it: <SupportContact />.

@@ -199,7 +199,7 @@ export default function EditProfilePage() {
                   'rounded-2xl border-2 p-4 text-left font-semibold transition',
                   participationType === option.value
                     ? 'border-brand-600 bg-brand-50 text-ink-900'
-                    : 'border-ink-200 bg-white text-ink-700 hover:border-brand-300',
+                    : 'border-ink-200 bg-surface text-ink-700 hover:border-brand-300',
                 )}
               >
                 <span className="mr-2" aria-hidden>
@@ -235,7 +235,7 @@ export default function EditProfilePage() {
                       'flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-semibold transition',
                       active
                         ? 'border-brand-600 bg-brand-600 text-white'
-                        : 'border-ink-200 bg-white text-ink-700 hover:border-brand-300',
+                        : 'border-ink-200 bg-surface text-ink-700 hover:border-brand-300',
                     )}
                   >
                     <span aria-hidden>{interest.emoji}</span>

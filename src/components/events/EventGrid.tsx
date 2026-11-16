@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { EmptyState, ErrorState, EventCardSkeleton } from '@/components/ui/Feedback'
-import { EventCard } from '@/components/events/EventCard'
+import { ResponsiveEventCard } from '@/components/events/EventCard'
 import type { CrewEvent } from '@/types'
 
 export function EventGrid({
@@ -28,7 +28,7 @@ export function EventGrid({
 }) {
   if (loading) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {Array.from({ length: 6 }, (_, index) => (
           <EventCardSkeleton key={index} />
         ))}
@@ -46,9 +46,9 @@ export function EventGrid({
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {events.map((event, index) => (
-          <EventCard key={event.id} event={event} eager={index < 3} />
+          <ResponsiveEventCard key={event.id} event={event} eager={index < 4} />
         ))}
       </div>
 
@@ -58,7 +58,7 @@ export function EventGrid({
             type="button"
             onClick={onLoadMore}
             disabled={loadingMore}
-            className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-soft ring-1 ring-ink-100 transition hover:shadow-lift disabled:opacity-60"
+            className="rounded-full bg-surface px-6 py-3 text-sm font-semibold text-brand-600 shadow-soft ring-1 ring-ink-100 transition hover:shadow-lift disabled:opacity-60"
           >
             {loadingMore ? 'Loading…' : 'Load more events'}
           </button>

@@ -388,7 +388,7 @@ export default function EventFormPage() {
               <button
                 type="button"
                 onClick={() => void removeImage()}
-                className="absolute top-3 right-3 rounded-full bg-ink-950/70 p-2 text-white transition hover:bg-ink-950"
+                className="absolute top-3 right-3 rounded-full bg-obsidian/70 p-2 text-white transition hover:bg-obsidian"
                 aria-label="Remove image"
               >
                 <Trash2 size={16} />
@@ -562,7 +562,7 @@ export default function EventFormPage() {
                     "rounded-full border px-3.5 py-1.5 text-sm font-semibold transition",
                     draft.price === preset
                       ? "border-brand-600 bg-brand-600 text-white"
-                      : "border-ink-200 bg-white text-ink-700 hover:border-brand-300",
+                      : "border-ink-200 bg-surface text-ink-700 hover:border-brand-300",
                   )}
                 >
                   {preset === 0 ? "Free" : `₹${preset}`}
@@ -607,7 +607,7 @@ export default function EventFormPage() {
                     "rounded-2xl border-2 p-4 text-left transition",
                     active
                       ? "border-brand-600 bg-brand-50"
-                      : "border-ink-200 bg-white hover:border-brand-300",
+                      : "border-ink-200 bg-surface hover:border-brand-300",
                   )}
                 >
                   <span className="text-2xl" aria-hidden>

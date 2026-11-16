@@ -1,8 +1,15 @@
-import type { ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '@/components/layout/Logo'
 
-/** Split shell: brand story on the left (desktop), the form on the right. */
+/**
+ * The sign-in poster: a tall pastel panel with the character leaning on a
+ * soft rounded card and a plant at each corner. Same shell for login,
+ * sign-up and reset.
+ *
+ * The poster keeps its natural size and is scaled down as a whole when the
+ * screen is shorter than it, so these pages never need to scroll.
+ */
 export function AuthLayout({
   title,
   subtitle,
@@ -14,50 +21,73 @@ export function AuthLayout({
   children: ReactNode
   footer?: ReactNode
 }) {
-  return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-2">
-      <aside className="relative hidden overflow-hidden bg-ink-950 p-12 lg:flex lg:flex-col lg:justify-between">
-        <div
-          className="absolute inset-0 opacity-70"
-          style={{
-            background:
-              'radial-gradient(60% 55% at 15% 15%, #7422e3 0%, transparent 60%), radial-gradient(55% 50% at 85% 80%, #fe4c10 0%, transparent 55%)',
-          }}
-          aria-hidden
-        />
-        <div className="relative">
-          <Link to="/explore">
-            <Logo variant="light" withTagline />
-          </Link>
-        </div>
-        <div className="relative max-w-md">
-          <h2 className="font-display text-4xl leading-tight font-extrabold text-white">
-            Work is only one part of life.
-          </h2>
-          <p className="mt-4 text-lg text-ink-200">
-            Find people who play the same music, run the same trails and show up for the same
-            weekends. Join as a participant or just come and enjoy.
-          </p>
-          <ul className="mt-8 space-y-3 text-ink-100">
-            <li className="flex items-center gap-3">🎸 Jam sessions, open mics and gigs</li>
-            <li className="flex items-center gap-3">🏸 Pick-up games and weekend sport</li>
-            <li className="flex items-center gap-3">🥾 Treks, rides and photo walks</li>
-          </ul>
-        </div>
-        <p className="relative text-sm text-ink-400">Find your crew. Make your day.</p>
-      </aside>
+  const posterRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(1)
 
-      <main className="flex min-h-dvh flex-col justify-center bg-ink-50 px-5 py-10 sm:px-10">
-        <div className="mx-auto w-full max-w-md">
-          <div className="mb-8 lg:hidden">
-            <Link to="/explore">
-              <Logo />
-            </Link>
-          </div>
-          <h1 className="font-display text-3xl font-extrabold text-ink-900">{title}</h1>
-          {subtitle ? <p className="mt-2 text-ink-500">{subtitle}</p> : null}
-          <div className="mt-7">{children}</div>
-          {footer ? <div className="mt-6 text-center text-sm text-ink-500">{footer}</div> : null}
+  useEffect(() => {
+    const poster = posterRef.current
+    if (!poster) return
+    const fit = () => {
+      // offsetHeight ignores the transform, so this is always the natural height.
+      const natural = poster.offsetHeight
+      if (natural > 0) setScale(Math.min(1, (window.innerHeight - 16) / natural))
+    }
+    fit()
+    // Not every embedded browser has ResizeObserver; the resize listener still covers rotation.
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(fit)
+    observer?.observe(poster)
+    window.addEventListener('resize', fit)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', fit)
+    }
+  }, [])
+
+  return (
+    <div className="auth-compact relative flex h-dvh items-center justify-center overflow-hidden px-2">
+      <Link to="/explore" className="absolute top-3 left-4 z-20 hidden lg:block">
+        <Logo />
+      </Link>
+
+      <main
+        ref={posterRef}
+        className="relative w-full max-w-[38rem] shrink-0 overflow-hidden rounded-[2rem] pb-[5%] shadow-lift"
+        style={{
+          background: 'linear-gradient(100deg, #beb5fc 0%, #e2bbfc 50%, #ffc6d6 100%)',
+          transform: `scale(${scale})`,
+        }}
+      >
+        <img
+          src="/brand/ref/girl-login.png"
+          alt=""
+          className="relative z-10 mx-auto mt-[1%] -mb-[3.6%] block w-[68%]"
+          onError={(event) => {
+            event.currentTarget.hidden = true
+          }}
+        />
+
+        <img
+          src="/brand/ref/plant-left.png"
+          alt=""
+          className="absolute bottom-[4%] -left-[1%] hidden w-[19.5%] sm:block"
+          onError={(event) => {
+            event.currentTarget.hidden = true
+          }}
+        />
+        <img
+          src="/brand/ref/plant-right.png"
+          alt=""
+          className="absolute -right-[1.5%] bottom-[4%] hidden w-[18.5%] sm:block"
+          onError={(event) => {
+            event.currentTarget.hidden = true
+          }}
+        />
+
+        <div className="relative mx-auto w-[92%] rounded-[2.25rem] bg-[#fdf4fb] px-6 pt-7 pb-5 shadow-lift sm:w-[70%] sm:px-7">
+          <h1 className="text-center font-display text-2xl font-extrabold text-ink-900">{title}</h1>
+          {subtitle ? <p className="mt-1 text-center text-sm text-ink-500">{subtitle}</p> : null}
+          <div className="mt-4">{children}</div>
+          {footer ? <div className="mt-3 text-center text-sm text-ink-500">{footer}</div> : null}
         </div>
       </main>
     </div>
