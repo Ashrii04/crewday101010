@@ -3,8 +3,10 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
 /**
- * Two suites, deliberately separated:
+ * Three suites, deliberately separated:
  *
+ *  - `tests/*.unit.test.ts` covers pure server helpers (the Razorpay signature
+ *    and amount checks in functions/src/razorpay.ts) with no emulator or DOM.
  *  - `tests/*.rules.test.ts` runs against the Firestore emulator in Node and
  *    proves the security rules behave as documented.
  *  - `tests/*.dom.test.tsx` renders the real app in jsdom to prove the routing,
@@ -20,6 +22,14 @@ export default defineConfig({
     hookTimeout: 30000,
     fileParallelism: false,
     projects: [
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['tests/**/*.unit.test.ts'],
+          environment: 'node',
+        },
+      },
       {
         extends: true,
         test: {

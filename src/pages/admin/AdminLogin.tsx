@@ -78,26 +78,26 @@ export default function AdminLoginPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-ink-950">
-        <Spinner className="h-7 w-7 text-white" />
+      <div className="flex min-h-dvh items-center justify-center">
+        <Spinner className="h-7 w-7 text-brand-500" />
       </div>
     )
   }
 
   return (
-    <div className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-ink-950 px-4 py-10">
+    <div className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-10">
       <div
         className="absolute inset-0 opacity-60"
         style={{
           background:
-            'radial-gradient(50% 45% at 20% 20%, #7422e3 0%, transparent 60%), radial-gradient(45% 40% at 85% 80%, #fe4c10 0%, transparent 55%)',
+            'radial-gradient(50% 45% at 20% 20%, #f5ab87 0%, transparent 60%), radial-gradient(45% 40% at 85% 80%, #c4553a 0%, transparent 55%)',
         }}
         aria-hidden
       />
 
       <div className="relative w-full max-w-md">
         <div className="mb-6 text-center">
-          <Logo variant="light" className="justify-center" />
+          <Logo className="justify-center" />
           <p className="mt-2 text-sm font-semibold tracking-[0.2em] text-ink-400 uppercase">
             Organiser access
           </p>
@@ -183,7 +183,7 @@ export default function AdminLoginPage() {
         </Card>
 
         <p className="mt-5 text-center text-sm text-ink-400">
-          <Link to="/" className="font-semibold hover:text-white">
+          <Link to="/" className="font-semibold hover:text-ink-900">
             Back to CrewDay
           </Link>
         </p>

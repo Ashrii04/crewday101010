@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore'
 import { Ban, RotateCcw, Search, Shield, ShieldOff, Trash2, UserCog } from 'lucide-react'
 import { Avatar } from '@/components/ui/Avatar'
@@ -24,7 +25,15 @@ export default function AdminUsersPage() {
   const { success, error: toastError } = useToast()
 
   const [tab, setTab] = useState<StatusTab>('all')
-  const [search, setSearch] = useState('')
+  // The admin top-bar search lands here as ?q=...; keep the box in step with it.
+  const [params] = useSearchParams()
+  const urlQuery = params.get('q') ?? ''
+  const [search, setSearch] = useState(urlQuery)
+  const [seenUrlQuery, setSeenUrlQuery] = useState(urlQuery)
+  if (urlQuery !== seenUrlQuery) {
+    setSeenUrlQuery(urlQuery)
+    setSearch(urlQuery)
+  }
   const debouncedSearch = useDebounce(search, 400)
 
   const [users, setUsers] = useState<UserProfile[]>([])

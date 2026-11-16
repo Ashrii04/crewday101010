@@ -25,6 +25,7 @@ import type {
   AttendanceStatus,
   CrewEvent,
   ParticipationType,
+  PaymentMethod,
   PaymentStatus,
   Registration,
   RegistrationStatus,
@@ -77,6 +78,10 @@ export function mapRegistration(
     checkedInBy: data.checkedInBy ?? '',
     cancelledAt: data.cancelledAt ?? null,
     cancelledReason: data.cancelledReason,
+    paymentMethod: data.paymentMethod as PaymentMethod | undefined,
+    paidAt: data.paidAt ?? null,
+    confirmedBy: data.confirmedBy ?? '',
+    paymentReference: data.paymentReference ?? '',
     updatedAt: data.updatedAt ?? null,
   }
 }
@@ -211,20 +216,77 @@ export async function registerForEvent(input: RegistrationInput): Promise<Regist
   })
 }
 
+export type MarkPaidOutcome =
+  | { result: 'paid'; registration: Registration }
+  | {
+      result: 'rejected'
+      code: 'not_found' | 'cancelled' | 'already_paid' | 'not_pending'
+      message: string
+    }
+
 /**
- * Mark a pending-payment registration as paid.
+ * An organiser confirms that a member's UPI payment arrived: the seat flips
+ * from `pending_payment` to `confirmed` and the QR becomes scannable.
  *
- * Only an organiser can call this successfully -- the security rules never let
- * a member flip their own `paid`. Razorpay payments go through the
- * `verifyPayment` / `razorpayWebhook` Cloud Functions instead (see
- * `paymentService`); this remains for manual cash/UPI-on-the-day settlement.
+ * The transaction re-reads the registration inside the lock and only proceeds
+ * while it is still `pending_payment`, so a registration the member cancelled
+ * a moment ago, or one another organiser already confirmed, is never flipped.
+ * Seat counters are untouched: a pending payment already holds its seat.
+ *
+ * The security rules are what stop a member doing this to themselves; only an
+ * admin may write these fields. `paymentReference` is the optional UPI
+ * transaction id the organiser read off their bank app.
  */
-export async function confirmPaidRegistration(registrationId: string): Promise<void> {
-  const { updateDoc } = await import('firebase/firestore')
-  await updateDoc(doc(db, COLLECTIONS.registrations, registrationId), {
-    paymentStatus: 'paid',
-    registrationStatus: 'confirmed',
-    updatedAt: serverTimestamp(),
+export async function markRegistrationPaid(
+  registrationId: string,
+  adminUid: string,
+  paymentReference = '',
+): Promise<MarkPaidOutcome> {
+  const registrationRef = doc(db, COLLECTIONS.registrations, registrationId)
+
+  return runTransaction<MarkPaidOutcome>(db, async (transaction) => {
+    const snapshot = await transaction.get(registrationRef)
+    const registration = snapshot.exists() ? mapRegistration(snapshot) : null
+    if (!registration)
+      return { result: 'rejected', code: 'not_found', message: 'Registration not found.' }
+
+    if (registration.registrationStatus === 'cancelled')
+      return {
+        result: 'rejected',
+        code: 'cancelled',
+        message: 'This registration was cancelled, so it cannot be marked as paid.',
+      }
+    if (registration.paymentStatus === 'paid')
+      return { result: 'rejected', code: 'already_paid', message: 'This payment is already confirmed.' }
+    if (registration.registrationStatus !== 'pending_payment')
+      return {
+        result: 'rejected',
+        code: 'not_pending',
+        message: 'This registration is not waiting for a payment.',
+      }
+
+    const reference = sanitiseText(paymentReference, 40)
+    transaction.update(registrationRef, {
+      paymentStatus: 'paid',
+      registrationStatus: 'confirmed',
+      paymentMethod: 'upi_manual',
+      paidAt: serverTimestamp(),
+      confirmedBy: adminUid,
+      ...(reference ? { paymentReference: reference } : {}),
+      updatedAt: serverTimestamp(),
+    })
+
+    return {
+      result: 'paid',
+      registration: {
+        ...registration,
+        paymentStatus: 'paid',
+        registrationStatus: 'confirmed',
+        paymentMethod: 'upi_manual',
+        confirmedBy: adminUid,
+        paymentReference: reference,
+      },
+    }
   })
 }
 
@@ -324,6 +386,22 @@ export async function eraseContactDetails(uid: string): Promise<void> {
 export async function getRegistration(registrationId: string): Promise<Registration | null> {
   const snapshot = await getDoc(doc(db, COLLECTIONS.registrations, registrationId))
   return snapshot.exists() ? mapRegistration(snapshot) : null
+}
+
+/**
+ * Live view of one registration, so a screen waiting on payment flips to
+ * confirmed the moment an organiser marks it paid.
+ */
+export function subscribeToRegistration(
+  registrationId: string,
+  onChange: (registration: Registration | null) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  return onSnapshot(
+    doc(db, COLLECTIONS.registrations, registrationId),
+    (snapshot) => onChange(snapshot.exists() ? mapRegistration(snapshot) : null),
+    (error) => onError?.(error),
+  )
 }
 
 export async function getUserRegistrationForEvent(

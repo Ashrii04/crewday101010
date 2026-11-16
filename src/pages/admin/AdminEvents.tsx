@@ -34,6 +34,7 @@ import { deleteStoredFile } from '@/services/storageService'
 import { notifyEventAudience } from '@/services/notificationService'
 import { trackSync } from '@/services/analyticsService'
 import { ADMIN_PAGE_SIZE, CATEGORY_EMOJI, EVENT_STATUS_LABEL } from '@/utils/constants'
+import { EventImage } from '@/components/events/EventCard'
 import { formatEventDateShort, formatPrice, formatTime } from '@/utils/format'
 import type { CrewEvent, EventStatus } from '@/types'
 
@@ -327,19 +328,61 @@ export default function AdminEventsPage() {
       </div>
 
       {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }, (_, index) => (
-            <Skeleton key={index} className="h-24 w-full rounded-card" />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-1">
+          {Array.from({ length: 6 }, (_, index) => (
+            <Skeleton key={index} className="h-60 w-full rounded-card sm:h-24" />
           ))}
         </div>
       ) : error ? (
         <ErrorState description={error} onRetry={load} />
       ) : events.length ? (
         <>
-          <ul className="space-y-3">
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-1">
             {events.map((event) => (
-              <Card as="li" key={event.id} className="p-4">
-                <div className="flex flex-wrap items-start gap-4">
+              <Card as="li" key={event.id} className="p-3 sm:p-4">
+                {/* Phone tile */}
+                <div className="flex h-full flex-col sm:hidden">
+                  <Link
+                    to={`/admin/events/${event.id}/attendees`}
+                    className="block aspect-4/3 overflow-hidden rounded-xl bg-brand-50"
+                  >
+                    <EventImage event={event} />
+                  </Link>
+                  <Link
+                    to={`/admin/events/${event.id}/attendees`}
+                    className="mt-2 line-clamp-2 text-sm leading-snug font-bold text-ink-900"
+                  >
+                    {event.title}
+                  </Link>
+                  <div className="mt-1">
+                    <Badge tone={STATUS_TONE[event.status]}>{EVENT_STATUS_LABEL[event.status]}</Badge>
+                  </div>
+                  <p className="mt-1.5 truncate text-[0.72rem] text-ink-500">
+                    {formatEventDateShort(event.date)} · {formatTime(event.startTime)}
+                  </p>
+                  <p className="text-[0.72rem] font-semibold text-ink-700">
+                    {event.registeredCount}/{event.capacity} going · {formatPrice(event.price, event.currency)}
+                  </p>
+                  <div className="mt-auto flex items-center justify-between gap-1 pt-2">
+                    <LinkButton
+                      to={`/admin/events/${event.id}/edit`}
+                      size="sm"
+                      variant="outline"
+                      icon={<Pencil size={14} />}
+                    >
+                      Edit
+                    </LinkButton>
+                    <RowActions
+                      event={event}
+                      onChanged={load}
+                      onCancel={setCancelTarget}
+                      onDelete={setDeleteTarget}
+                    />
+                  </div>
+                </div>
+
+                {/* Tablet and desktop row */}
+                <div className="hidden flex-wrap items-start gap-4 sm:flex">
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-xl">
                     {CATEGORY_EMOJI[event.category] ?? '✨'}
                   </span>

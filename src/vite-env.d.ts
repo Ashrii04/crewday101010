@@ -10,6 +10,10 @@ interface ImportMetaEnv {
   readonly VITE_FIREBASE_MEASUREMENT_ID: string
   readonly VITE_FIREBASE_VAPID_KEY: string
   readonly VITE_USE_FIREBASE_EMULATORS: string
+  /** Public support address shown on the privacy and account-deletion pages. */
+  readonly VITE_SUPPORT_EMAIL?: string
+  /** "true" shows the Razorpay online checkout button (needs deployed Functions). */
+  readonly VITE_ONLINE_PAYMENTS?: string
 }
 
 interface ImportMeta {

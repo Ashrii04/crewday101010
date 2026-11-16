@@ -63,7 +63,7 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      <div className="mt-4 grid grid-cols-3 divide-x divide-ink-100 rounded-card bg-white py-4 shadow-soft ring-1 ring-ink-100/70">
+      <div className="mt-4 grid grid-cols-3 divide-x divide-ink-100 rounded-card bg-surface py-4 shadow-soft ring-1 ring-ink-100/70">
         {[
           { label: 'Events Joined', value: upcoming.length + past.length },
           { label: 'Attended', value: attended.length },
@@ -100,6 +100,16 @@ export default function ProfilePage() {
             </p>
           </Card>
         )}
+      </section>
+
+      <section className="mt-6">
+        <Link
+          to="/purchases"
+          className="flex items-center justify-between rounded-card border border-ink-100 bg-surface px-4 py-3 font-semibold text-ink-900 hover:border-brand-200"
+        >
+          Purchase history
+          <span className="text-sm text-brand-600">View</span>
+        </Link>
       </section>
 
       <section className="mt-8">

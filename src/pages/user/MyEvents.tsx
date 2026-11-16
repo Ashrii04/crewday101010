@@ -46,6 +46,9 @@ function RegistrationRow({ registration }: { registration: Registration }) {
           <p className="truncate text-sm text-ink-500">{registration.eventVenue}</p>
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
             <StatusBadge registration={registration} />
+            {registration.registrationStatus === 'pending_payment' ? (
+              <span className="text-xs font-semibold text-brand-600">Pay now →</span>
+            ) : null}
             <span className="text-xs font-medium text-ink-400">
               {registration.participationType === 'participant' ? '🎤 Participant' : '👀 Audience'}
             </span>

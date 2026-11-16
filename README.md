@@ -251,7 +251,18 @@ npm run deploy             # build + deploy hosting, rules, indexes and function
 
 ## Android app
 
-The same codebase ships as an Android app. [Capacitor](https://capacitorjs.com)
+> **Which Android build ships to Google Play: the Trusted Web Activity (TWA).**
+> The Play listing is a thin Android wrapper around the live website (see
+> [`playstore/`](playstore/README.md): Bubblewrap config, web manifest, icons and
+> Digital Asset Links). Web fixes reach Android users as soon as Vercel deploys,
+> Google sign-in runs in real Chrome with the existing web code, and there is no
+> native sign-in or `google-services.json` to maintain. The Capacitor project in
+> [`android/`](android/) described below is kept as a **dormant alternative**: do
+> not upload both, because they share the package name `app.crewday` and Play
+> fixes the upload key on the first upload. Choose Capacitor instead only if you
+> need native features later (push, offline shell).
+
+Alternative build (dormant): the same codebase also ships as an Android app. [Capacitor](https://capacitorjs.com)
 loads the production web build (`dist/`) into a WebView inside a native shell;
 the native project lives in [`android/`](android/) and opens directly in
 Android Studio. There is one codebase, one Firebase project and one set of
@@ -332,8 +343,7 @@ outside git.
 3. **Build:** `npm run android:bundle`. The bundle lands at
    `android/app/build/outputs/bundle/release/app-release.aab`.
 4. **Bump the version every upload.** Play rejects a repeated `versionCode`:
-   `cd android && gradlew bundleRelease -PversionCode=2 -PversionName=1.1`
-   (defaults are 1 and `1.0`).
+   `cd android && gradlew bundleRelease -PversionCode=3 -PversionName=1.1.1` (the defaults in `android/app/build.gradle` are the current release: 2 / 1.1.0)
 5. **Firebase / Google sign-in:** add the SHA-1 of the upload key
    (`keytool -list -v -keystore crewday-upload.jks -alias crewday-upload`) and,
    once Play App Signing issues it (Play Console -> Setup -> App signing),
@@ -551,31 +561,28 @@ about money on the server:
   rules make it impossible for a client to write `paid` or `confirmed`.
 - The seat is held while payment is pending, so a paid event cannot oversell
   during checkout.
-- **Pay now** (registration success screen and the ticket) runs
-  `src/services/paymentService.ts`: it calls the `createPaymentOrder` Cloud
-  Function, opens Razorpay Checkout on the returned order, and hands the
-  signed result to `verifyPayment`, which confirms the seat. The amount always
-  comes from the registration document, never from the client.
-- `razorpayWebhook` (`functions/src/payments.ts`) is the safety net: Razorpay
-  posts `payment.captured` / `payment.failed` there, so a seat is confirmed
-  even if the phone dies before the app can verify. Both paths go through one
-  idempotent transaction, so a payment reported twice confirms once.
+- Members pay in one of two ways, both shown on the registration success screen
+  and the ticket (`src/components/payments/PaymentPanel.tsx`):
+  - **UPI**: a `upi://pay` link and QR for the organiser's UPI id. The organiser
+    checks their bank app and taps **Mark paid** (`/admin/payments`,
+    attendee list), which confirms the seat.
+  - **Online (Razorpay)**: `api/razorpay-order.ts` (a Vercel API route, no
+    Firebase Blaze plan needed) creates the order from the event price,
+    Razorpay Checkout opens on it, and `api/razorpay-webhook.ts` verifies the
+    HMAC signature and confirms the seat. The browser never sends an amount and
+    never marks anything paid. Off until `VITE_ONLINE_PAYMENTS=true`; setup is
+    in `docs/razorpay-setup.md`.
+  - Both paths go through one idempotent transaction, so a payment reported twice
+    confirms once. `functions/src/payments.ts` is a dormant Cloud Functions
+    version of the Razorpay route for if the project moves to Blaze.
 
-### Setting up Razorpay (Blaze plan, one-time)
+### Setting up Razorpay
 
-```bash
-firebase functions:secrets:set RAZORPAY_KEY_ID        # rzp_test_... or rzp_live_...
-firebase functions:secrets:set RAZORPAY_KEY_SECRET
-firebase functions:secrets:set RAZORPAY_WEBHOOK_SECRET # anything; paste the same value in the dashboard
-npm run deploy:functions
-```
-
-Then in the Razorpay dashboard -> Settings -> Webhooks add
-`https://asia-south1-crewday-2657d.cloudfunctions.net/razorpayWebhook` with the
-same secret and the events `payment.captured`, `payment.failed`, `order.paid`.
-
-Until the functions are deployed the Pay button explains that online payment
-is not available yet and the seat stays held, so nothing breaks on Spark.
+Follow `docs/razorpay-setup.md`: server-only keys and the webhook secret go into
+the Vercel project's environment, the Razorpay dashboard webhook points at
+`https://rooman-books.momsmagic.shop/api/razorpay-webhook` (events
+`payment.captured`, `order.paid`), and `VITE_ONLINE_PAYMENTS=true` switches the
+button on. Until then the UPI option works on its own and nothing breaks on Spark.
 
 Revenue reporting on the dashboard stays hidden until at least one paid event
 exists.

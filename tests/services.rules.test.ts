@@ -49,6 +49,7 @@ import {
   joinWaitlist,
   leaveWaitlist,
   listWaitlist,
+  markRegistrationPaid,
   promoteFromWaitlist,
   registerForEvent,
   registrationIdFor,
@@ -485,5 +486,136 @@ describe('bumpInterestUsage (real batch vs rules)', () => {
     as(MEMBER)
     await expect(bumpInterestUsage(['guitar'], 5)).rejects.toBeTruthy()
     expect((await read('interests', 'guitar'))?.usageCount).toBe(3)
+  })
+})
+
+describe('markRegistrationPaid (real transaction vs rules)', () => {
+  beforeEach(async () => {
+    await seed(async (db) => {
+      await setDoc(doc(db, 'events', EVENT), baseEvent({ price: 199, isFree: false }))
+    })
+  })
+
+  async function pendingSeat() {
+    as(MEMBER)
+    const result = await registerForEvent(input(MEMBER))
+    expect(result.status).toBe('pending_payment')
+    return result
+  }
+
+  it('lets an admin confirm a pending_payment seat, leaving every counter alone', async () => {
+    const { registrationId, qrToken } = await pendingSeat()
+    const before = await eventCounts()
+    const profileBefore = (await read('users', MEMBER))?.eventsRegistered
+
+    as(ADMIN)
+    const outcome = await markRegistrationPaid(registrationId, ADMIN, '412345678901')
+    expect(outcome.result).toBe('paid')
+
+    expect(await read('registrations', registrationId)).toMatchObject({
+      paymentStatus: 'paid',
+      registrationStatus: 'confirmed',
+      paymentMethod: 'upi_manual',
+      confirmedBy: ADMIN,
+      paymentReference: '412345678901',
+      price: 199,
+      qrToken,
+    })
+    expect((await read('registrations', registrationId))?.paidAt).toBeTruthy()
+    expect(await eventCounts()).toEqual(before)
+    expect((await read('users', MEMBER))?.eventsRegistered).toBe(profileBefore)
+  })
+
+  it('omits the payment reference when none is given', async () => {
+    const { registrationId } = await pendingSeat()
+    as(ADMIN)
+    await markRegistrationPaid(registrationId, ADMIN)
+    const reg = await read('registrations', registrationId)
+    expect(reg?.paymentStatus).toBe('paid')
+    expect(reg).not.toHaveProperty('paymentReference')
+  })
+
+  it('makes the QR scannable: check-in works after confirmation, not before', async () => {
+    const { registrationId, qrToken } = await pendingSeat()
+    as(ADMIN)
+    const early = await checkInByQr({ registrationId, qrToken }, EVENT, ADMIN)
+    expect(early).toMatchObject({ result: 'invalid', code: 'unpaid' })
+
+    await markRegistrationPaid(registrationId, ADMIN)
+    const late = await checkInByQr({ registrationId, qrToken }, EVENT, ADMIN)
+    expect(late.result).toBe('valid')
+  })
+
+  it('refuses a cancelled registration and leaves it cancelled', async () => {
+    const { registrationId } = await pendingSeat()
+    as(MEMBER)
+    await cancelRegistration(registrationId)
+    const before = await eventCounts()
+
+    as(ADMIN)
+    const outcome = await markRegistrationPaid(registrationId, ADMIN)
+    expect(outcome).toMatchObject({ result: 'rejected', code: 'cancelled' })
+    expect(await read('registrations', registrationId)).toMatchObject({
+      registrationStatus: 'cancelled',
+      paymentStatus: 'pending',
+    })
+    expect(await read('registrations', registrationId)).not.toHaveProperty('confirmedBy')
+    expect(await eventCounts()).toEqual(before)
+  })
+
+  it('refuses an already-paid registration without rewriting who confirmed it', async () => {
+    const { registrationId } = await pendingSeat()
+    as(ADMIN)
+    await markRegistrationPaid(registrationId, ADMIN)
+
+    const outcome = await markRegistrationPaid(registrationId, 'someone-else')
+    expect(outcome).toMatchObject({ result: 'rejected', code: 'already_paid' })
+    expect(await read('registrations', registrationId)).toMatchObject({ confirmedBy: ADMIN })
+  })
+
+  it('refuses a registration that is already confirmed without payment (free event)', async () => {
+    await seed(async (db) => {
+      await setDoc(doc(db, 'events', 'free-event'), baseEvent())
+    })
+    as(MEMBER)
+    const { registrationId } = await registerForEvent(input(MEMBER, { eventId: 'free-event' }))
+
+    as(ADMIN)
+    const outcome = await markRegistrationPaid(registrationId, ADMIN)
+    expect(outcome).toMatchObject({ result: 'rejected', code: 'not_pending' })
+    expect(await read('registrations', registrationId)).toMatchObject({
+      paymentStatus: 'not_required',
+      registrationStatus: 'confirmed',
+    })
+  })
+
+  it('reports a missing registration instead of creating one', async () => {
+    as(ADMIN)
+    const outcome = await markRegistrationPaid(regId('ghost-uid'), ADMIN)
+    expect(outcome).toMatchObject({ result: 'rejected', code: 'not_found' })
+    expect(await read('registrations', regId('ghost-uid'))).toBeUndefined()
+  })
+
+  it('rejects the member trying to confirm their own payment', async () => {
+    const { registrationId } = await pendingSeat()
+    const before = await eventCounts()
+
+    as(MEMBER)
+    await expect(markRegistrationPaid(registrationId, MEMBER)).rejects.toBeTruthy()
+    expect(await read('registrations', registrationId)).toMatchObject({
+      paymentStatus: 'pending',
+      registrationStatus: 'pending_payment',
+    })
+    expect(await eventCounts()).toEqual(before)
+  })
+
+  it("rejects another member confirming someone else's payment", async () => {
+    const { registrationId } = await pendingSeat()
+    as(OTHER)
+    await expect(markRegistrationPaid(registrationId, OTHER)).rejects.toBeTruthy()
+    expect(await read('registrations', registrationId)).toMatchObject({
+      paymentStatus: 'pending',
+      registrationStatus: 'pending_payment',
+    })
   })
 })

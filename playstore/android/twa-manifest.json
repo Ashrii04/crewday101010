@@ -1,0 +1,44 @@
+{
+  "packageId": "app.crewday",
+  "host": "rooman-books.momsmagic.shop",
+  "name": "CrewDay",
+  "launcherName": "CrewDay",
+  "display": "standalone",
+  "themeColor": "#ffffff",
+  "themeColorDark": "#ffffff",
+  "navigationColor": "#ffffff",
+  "navigationColorDark": "#ffffff",
+  "navigationDividerColor": "#ffffff",
+  "navigationDividerColorDark": "#ffffff",
+  "backgroundColor": "#ffffff",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://rooman-books.momsmagic.shop/icons/icon-512.png",
+  "maskableIconUrl": "https://rooman-books.momsmagic.shop/icons/icon-512-maskable.png",
+  "monochromeIconUrl": "",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "C:/Users/Ashritha S/.crewday-keys/crewday-upload.jks",
+    "alias": "crewday"
+  },
+  "appVersionCode": 3,
+  "appVersion": "1.2",
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://rooman-books.momsmagic.shop/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": { "enabled": false },
+    "playBilling": { "enabled": false }
+  },
+  "alphaDependencies": { "enabled": false },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fingerprints": [],
+  "orientation": "portrait",
+  "minSdkVersion": 24,
+  "targetSdkVersion": 36,
+  "enableNotifications": false
+}
+

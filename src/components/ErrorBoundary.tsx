@@ -31,7 +31,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!this.state.error) return this.props.children
 
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-ink-50 px-6 text-center">
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-5 px-6 text-center">
         <Logo />
         <div>
           <h1 className="font-display text-2xl font-bold text-ink-900">Something went wrong</h1>
@@ -52,7 +52,7 @@ export class ErrorBoundary extends Component<Props, State> {
           </Button>
         </div>
         {import.meta.env.DEV ? (
-          <pre className="max-w-lg overflow-auto rounded-xl bg-ink-900 p-4 text-left text-xs text-ink-100">
+          <pre className="max-w-lg overflow-auto rounded-xl bg-surface p-4 text-left text-xs text-ink-800">
             {this.state.error.message}
           </pre>
         ) : null}

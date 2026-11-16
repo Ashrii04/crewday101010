@@ -4,8 +4,8 @@ import { CalendarPlus, PartyPopper } from 'lucide-react'
 import { Button, LinkButton } from '@/components/ui/Button'
 import { EmptyState, LoadingScreen } from '@/components/ui/Feedback'
 import { QRTicket } from '@/components/qr/QRTicket'
-import { PayNowButton } from '@/components/events/PayNowButton'
-import { getRegistration } from '@/services/registrationService'
+import { PaymentPanel } from '@/components/payments/PaymentPanel'
+import { subscribeToRegistration } from '@/services/registrationService'
 import { combineDateTime, formatEventDate, formatTime } from '@/utils/format'
 import type { Registration } from '@/types'
 
@@ -47,20 +47,18 @@ export default function RegistrationSuccessPage() {
   const [registration, setRegistration] = useState<Registration | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Live, so the payment panel gives way to an active QR as soon as the
+  // organiser confirms the payment.
   useEffect(() => {
-    getRegistration(registrationId)
-      .then(setRegistration)
-      .catch(() => undefined)
-      .finally(() => setLoading(false))
+    return subscribeToRegistration(
+      registrationId,
+      (next) => {
+        setRegistration(next)
+        setLoading(false)
+      },
+      () => setLoading(false),
+    )
   }, [registrationId])
-
-  // After a successful checkout the server has already flipped the document;
-  // re-read it so the QR activates on this screen without a navigation.
-  const refresh = () => {
-    void getRegistration(registrationId)
-      .then((next) => next && setRegistration(next))
-      .catch(() => undefined)
-  }
 
   if (loading) return <LoadingScreen label="Creating your ticket…" />
   if (!registration) {
@@ -75,7 +73,6 @@ export default function RegistrationSuccessPage() {
   }
 
   const confirmed = registration.registrationStatus === 'confirmed'
-  const awaitingPayment = registration.registrationStatus === 'pending_payment'
 
   return (
     <div className="mx-auto max-w-md">
@@ -84,22 +81,18 @@ export default function RegistrationSuccessPage() {
           <PartyPopper size={30} aria-hidden />
         </div>
         <h1 className="font-display text-3xl font-extrabold text-ink-900">
-          {confirmed ? 'Registration Confirmed 🎉' : 'Seat held — pay to confirm'}
+          {confirmed ? 'Registration Confirmed 🎉' : 'Seat held for you'}
         </h1>
         <p className="mt-2 text-ink-500">
           {confirmed
             ? `See you on ${formatEventDate(registration.eventDate)} at ${formatTime(registration.eventStartTime)}.`
-            : 'Complete payment and your QR code activates automatically.'}
+            : 'Pay the organiser below and your QR code activates once they confirm it.'}
         </p>
       </div>
 
-      {awaitingPayment ? (
-        <div className="mb-5">
-          <PayNowButton registration={registration} onPaid={refresh} />
-        </div>
-      ) : null}
-
       <QRTicket registration={registration} />
+
+      <PaymentPanel registration={registration} />
 
       <div className="mt-6 space-y-3">
         <Button

@@ -282,6 +282,10 @@ service cloud.firestore {
         // Free events confirm immediately; paid events must wait for payment.
         && data.registrationStatus == (event.price <= 0 ? 'confirmed' : 'pending_payment')
         && data.paymentStatus == (event.price <= 0 ? 'not_required' : 'pending')
+        // Proof-of-payment fields are written by an organiser when they
+        // confirm a payment, so a new or re-registered ticket cannot arrive
+        // already claiming "paid by UPI, confirmed by an admin".
+        && !data.keys().hasAny(['paymentMethod', 'paidAt', 'confirmedBy'])
         // Attendance can only ever be set by an organiser.
         && data.attendanceStatus == 'not_checked_in'
         && data.checkInTime == null

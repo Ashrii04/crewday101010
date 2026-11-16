@@ -30,7 +30,7 @@ function Tab({ item }: { item: NavItem }) {
       className={({ isActive }) =>
         clsx(
           'flex h-full flex-col items-center justify-center gap-1 text-[0.68rem] font-semibold transition-colors',
-          isActive ? 'text-brand-500' : 'text-ink-400 hover:text-ink-600',
+          isActive ? 'text-brand-600' : 'text-ink-600 hover:text-ink-900',
         )
       }
     >
@@ -69,7 +69,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-ink-100 bg-white lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-ink-100 bg-surface lg:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div
@@ -90,7 +90,7 @@ export function BottomNav() {
             type="button"
             onClick={() => navigate(action.to)}
             aria-label={action.label}
-            className="absolute -top-6 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-linear-to-br from-brand-500 to-sky-500 text-white shadow-pink transition active:scale-92"
+            className="absolute -top-6 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-linear-to-br from-brand-500 to-sky-500 text-obsidian shadow-gold transition active:scale-92"
           >
             <Plus size={26} strokeWidth={2.6} aria-hidden />
           </button>

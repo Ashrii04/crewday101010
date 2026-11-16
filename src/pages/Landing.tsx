@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarHeart, Compass, Mic2, Users } from 'lucide-react'
 import { Logo } from '@/components/layout/Logo'
 import { Button, LinkButton } from '@/components/ui/Button'
-import { EventCard } from '@/components/events/EventCard'
+import { ResponsiveEventCard } from '@/components/events/EventCard'
+import { HeroCollage } from '@/components/events/HeroCollage'
 import { EventCardSkeleton } from '@/components/ui/Feedback'
 import { listPublishedEvents } from '@/services/eventService'
 import { EMPTY_FILTERS, type CrewEvent } from '@/types'
@@ -51,8 +52,8 @@ export default function LandingPage() {
   }, [])
 
   return (
-    <div className="min-h-dvh bg-ink-50">
-      <header className="sticky top-0 z-40 border-b border-ink-100 bg-white/85 pt-safe backdrop-blur-lg">
+    <div className="min-h-dvh">
+      <header className="sticky top-0 z-40 border-b border-ink-100 bg-surface/85 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <Logo />
           <div className="flex items-center gap-2">
@@ -70,23 +71,32 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-ink-950">
+      <section className="relative overflow-hidden border-b border-white/60 bg-surface">
         <div
           className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(65% 60% at 20% 10%, #7422e3 0%, transparent 60%), radial-gradient(55% 55% at 85% 85%, #fe4c10 0%, transparent 55%)',
+              'radial-gradient(60% 55% at 15% 0%, rgb(190 24 93 / 0.09) 0%, transparent 60%), radial-gradient(50% 45% at 90% 100%, rgb(198 154 88 / 0.10) 0%, transparent 60%)',
           }}
           aria-hidden
         />
-        <div className="relative mx-auto max-w-6xl px-4 py-20 sm:py-28">
-          <p className="mb-4 inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-bold tracking-[0.18em] text-white/80 uppercase ring-1 ring-white/20">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 sm:py-28 lg:grid-cols-[1.1fr_0.9fr]">
+          <div>
+          <img
+            src="/brand/crewday-banner.png"
+            alt="CrewDay"
+            className="mb-8 w-full max-w-xl drop-shadow-[0_12px_24px_rgb(74_22_143_/_0.25)]"
+            onError={(event) => {
+              event.currentTarget.hidden = true
+            }}
+          />
+          <p className="mb-4 inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-bold tracking-[0.18em] text-brand-600 uppercase ring-1 ring-brand-200">
             Find your crew. Make your day.
           </p>
-          <h1 className="max-w-3xl font-display text-5xl leading-[1.05] font-extrabold text-white sm:text-6xl lg:text-7xl">
+          <h1 className="max-w-3xl font-display text-5xl leading-[1.05] font-extrabold text-ink-900 sm:text-6xl lg:text-7xl">
             Find Your Crew.
           </h1>
-          <p className="mt-5 max-w-xl text-lg text-ink-200 sm:text-xl">
+          <p className="mt-5 max-w-xl text-lg text-ink-600 sm:text-xl">
             Work is only one part of life. Discover people, hobbies, activities and events happening
             around you — every single weekend.
           </p>
@@ -97,29 +107,37 @@ export default function LandingPage() {
             <LinkButton
               to="/signup"
               size="lg"
-              className="border border-white/30 bg-white/10 text-white backdrop-blur hover:bg-white/20"
+              className="border border-white/70 bg-surface text-ink-900 hover:bg-white/70"
               variant="ghost"
               icon={<ArrowRight size={18} />}
             >
               Join CrewDay
             </LinkButton>
           </div>
+          <Link
+            to="/plan"
+            className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:underline"
+          >
+            ✨ Not sure what to do? Plan my CrewDay <ArrowRight size={15} aria-hidden />
+          </Link>
 
-          <dl className="mt-14 grid max-w-2xl grid-cols-3 gap-6 border-t border-white/15 pt-8">
+          <dl className="mt-14 grid max-w-2xl grid-cols-3 gap-6 border-t border-ink-100 pt-8">
             {[
               { label: 'Ways to join', value: '2', hint: 'Participant or audience' },
               { label: 'Interests', value: '20+', hint: 'From guitar to trekking' },
               { label: 'Most events', value: 'Free', hint: 'No ticket price to start' },
             ].map((stat) => (
               <div key={stat.label}>
-                <dt className="text-xs font-semibold tracking-wide text-ink-400 uppercase">
+                <dt className="text-xs font-semibold tracking-wide text-ink-500 uppercase">
                   {stat.label}
                 </dt>
-                <dd className="mt-1 font-display text-2xl font-bold text-white">{stat.value}</dd>
-                <dd className="text-xs text-ink-400">{stat.hint}</dd>
+                <dd className="mt-1 font-display text-2xl font-bold text-ink-900">{stat.value}</dd>
+                <dd className="text-xs text-ink-500">{stat.hint}</dd>
               </div>
             ))}
           </dl>
+          </div>
+          <HeroCollage events={events} />
         </div>
       </section>
 
@@ -129,7 +147,7 @@ export default function LandingPage() {
           {PILLARS.map((pillar) => (
             <div
               key={pillar.title}
-              className="rounded-card border border-ink-100 bg-white p-6 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift"
+              className="rounded-card border border-ink-100 bg-surface p-6 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift"
             >
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
                 <pillar.icon size={22} aria-hidden />
@@ -159,19 +177,19 @@ export default function LandingPage() {
         </div>
 
         {loading ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
             {Array.from({ length: 3 }, (_, index) => (
               <EventCardSkeleton key={index} />
             ))}
           </div>
         ) : events.length ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
             {events.map((event) => (
-              <EventCard key={event.id} event={event} eager />
+              <ResponsiveEventCard key={event.id} event={event} eager />
             ))}
           </div>
         ) : (
-          <div className="rounded-card border border-dashed border-ink-200 bg-white px-6 py-14 text-center">
+          <div className="rounded-card border border-dashed border-ink-200 bg-surface px-6 py-14 text-center">
             <p className="text-3xl" aria-hidden>
               🎈
             </p>
@@ -190,7 +208,7 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-4 pb-20">
-        <div className="overflow-hidden rounded-card bg-linear-to-br from-brand-700 via-brand-600 to-sunset-500 px-6 py-14 text-center shadow-lift sm:px-12">
+        <div className="overflow-hidden rounded-card bg-linear-to-br from-sky-400 via-brand-400 to-brand-600 px-6 py-14 text-center shadow-lift sm:px-12">
           <h2 className="font-display text-3xl font-extrabold text-white sm:text-4xl">
             Ready for your next CrewDay?
           </h2>
@@ -204,7 +222,7 @@ export default function LandingPage() {
             <Button
               size="lg"
               variant="ghost"
-              className="border border-white/40 text-white hover:bg-white/15"
+              className="border border-white/40 text-white hover:bg-surface/15"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
               Back to top
@@ -213,7 +231,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-ink-100 bg-white">
+      <footer className="border-t border-ink-100 bg-surface">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between">
           <Logo />
           <nav className="flex flex-wrap gap-5 text-sm text-ink-500">
@@ -233,7 +251,7 @@ export default function LandingPage() {
               Organiser login
             </Link>
           </nav>
-          <p className="text-sm text-ink-400">© {new Date().getFullYear()} CrewDay</p>
+          <p className="text-sm text-white/55">© {new Date().getFullYear()} CrewDay</p>
         </div>
       </footer>
     </div>

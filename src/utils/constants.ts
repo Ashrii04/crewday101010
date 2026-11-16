@@ -110,8 +110,17 @@ export const ADMIN_PAGE_SIZE = 25
 export const CHECKIN_WINDOW_MINUTES = 180
 
 /**
- * Where privacy and account-deletion requests go. Shown on the public
- * /delete-account page that Google Play links to, so it must be a mailbox
- * somebody actually reads.
+ * Public support address for the privacy policy and the account-deletion page.
+ * Defaults to the mailbox the Play listing already uses; set `VITE_SUPPORT_EMAIL`
+ * on the deployment to point it somewhere else. Play requires a real contact
+ * email on the listing.
  */
-export const SUPPORT_EMAIL = 'shalyagaonkar@gmail.com'
+export const SUPPORT_EMAIL = (import.meta.env.VITE_SUPPORT_EMAIL ?? '').trim() || 'shalyagaonkar@gmail.com'
+
+/**
+ * Whether the online (Razorpay) checkout button is offered. It stays off until
+ * the Vercel API routes behind it (api/razorpay-*.ts) have their server-only
+ * keys set; see docs/razorpay-setup.md. UPI payments confirmed by the organiser work
+ * regardless of this flag.
+ */
+export const ONLINE_PAYMENTS = import.meta.env.VITE_ONLINE_PAYMENTS === 'true'
