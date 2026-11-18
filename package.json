@@ -1,7 +1,7 @@
 {
   "name": "crew-day-app",
   "private": true,
-  "version": "1.2.0",
+  "version": "3.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
