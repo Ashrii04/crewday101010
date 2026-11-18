@@ -41,7 +41,7 @@ if (config.projectId && config.appId) {
     const title = payload.notification?.title ?? 'CrewDay'
     self.registration.showNotification(title, {
       body: payload.notification?.body ?? '',
-      icon: '/crewday-mark.svg',
+      icon: '/icons/icon-192.png',
       badge: '/crewday-mark.svg',
       tag: payload.data?.eventId || 'crewday',
       data: { url: payload.data?.url || '/notifications' },

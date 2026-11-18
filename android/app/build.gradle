@@ -32,6 +32,14 @@ def releaseKeyAlias = signingValue('keyAlias', 'CREWDAY_KEY_ALIAS')
 def releaseKeyPassword = signingValue('keyPassword', 'CREWDAY_KEY_PASSWORD')
 def hasReleaseSigning = releaseStoreFile && releaseStorePassword && releaseKeyAlias && releaseKeyPassword
 
+// Defaults are the next release (versionCode 3 is already on Play); override per build with
+// -PversionCode=5 -PversionName=3.02. Play needs a higher versionCode on every
+// upload, so bump the code here (and package.json's version) with each release.
+// Computed up front: `versionCode (expr).toInteger()` would be parsed by Groovy as
+// a call to versionCode(...) followed by .toInteger() on its null result.
+def appVersionCode = (project.findProperty('versionCode') ?: '4').toString().toInteger()
+def appVersionName = (project.findProperty('versionName') ?: '3.01').toString()
+
 android {
     namespace = "app.crewday"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -39,10 +47,8 @@ android {
         applicationId "app.crewday"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Play rejects an upload whose versionCode it has seen before (3 is
-        // already on Play). Override per build with -PversionCode=5 -PversionName=3.02.
-        versionCode = (project.findProperty('versionCode') ?: '4').toInteger()
-        versionName = (project.findProperty('versionName') ?: '3.01')
+        versionCode appVersionCode
+        versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

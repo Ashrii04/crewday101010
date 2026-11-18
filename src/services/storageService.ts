@@ -1,5 +1,5 @@
 import type { FirebaseStorage } from 'firebase/storage'
-import { firebaseApp, useEmulators } from '@/firebase/config'
+import { emulatorHost, firebaseApp, useEmulators } from '@/firebase/config'
 
 /**
  * `firebase/storage` is imported on demand. Only organisers upload, so paying
@@ -10,7 +10,7 @@ let storagePromise: Promise<FirebaseStorage> | null = null
 function getStorageLazily(): Promise<FirebaseStorage> {
   storagePromise ??= import('firebase/storage').then(({ getStorage, connectStorageEmulator }) => {
     const instance = getStorage(firebaseApp)
-    if (useEmulators) connectStorageEmulator(instance, '127.0.0.1', 9199)
+    if (useEmulators) connectStorageEmulator(instance, emulatorHost, 9199)
     // The SDK's defaults retry a failed upload for ten minutes, which is what
     // left the admin form on "Uploading… 0%" indefinitely. Give up in well
     // under a minute and let the error reach the person instead.

@@ -37,7 +37,7 @@ export function EventFilterBar({
   useEffect(() => setDraft(filters), [filters])
 
   return (
-    <div className={embedded ? 'space-y-5' : 'space-y-5 rounded-card bg-white p-5 shadow-soft'}>
+    <div className={embedded ? 'space-y-5' : 'space-y-5 rounded-card bg-surface p-5 shadow-soft'}>
       <div>
         <p className="mb-2 text-sm font-semibold text-ink-800">When</p>
         <div className="flex flex-wrap gap-2">

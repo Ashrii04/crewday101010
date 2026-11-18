@@ -16,6 +16,7 @@ import {
  * never reaches a member's phone, and the QR decoder only loads at check-in.
  */
 const LandingPage = lazy(() => import('@/pages/Landing'))
+const PlanCrewDayPage = lazy(() => import('@/pages/PlanCrewDay'))
 const LoginPage = lazy(() => import('@/pages/auth/Login'))
 const SignupPage = lazy(() => import('@/pages/auth/Signup'))
 const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPassword'))
@@ -32,6 +33,7 @@ const EditProfilePage = lazy(() => import('@/pages/user/EditProfile'))
 const SuggestEventPage = lazy(() => import('@/pages/user/SuggestEvent'))
 const SettingsPage = lazy(() => import('@/pages/user/Settings'))
 const NotificationsPage = lazy(() => import('@/pages/user/Notifications'))
+const PurchaseHistoryPage = lazy(() => import('@/pages/user/PurchaseHistory'))
 const NotFoundPage = lazy(() => import('@/pages/NotFound'))
 
 const AdminLoginPage = lazy(() => import('@/pages/admin/AdminLogin'))
@@ -44,16 +46,18 @@ const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsers'))
 const AdminInterestsPage = lazy(() => import('@/pages/admin/AdminInterests'))
 const AdminRequestsPage = lazy(() => import('@/pages/admin/AdminRequests'))
 const AdminReportsPage = lazy(() => import('@/pages/admin/AdminReports'))
+const AdminPaymentsPage = lazy(() => import('@/pages/admin/AdminPayments'))
 
-// Legal pages are two named exports from one module.
+// Legal pages are named exports from one module.
+const DeleteAccountPage = lazy(() =>
+  import('@/pages/legal/Legal').then((module) => ({ default: module.DeleteAccountPage })),
+)
 const TermsPage = lazy(() =>
   import('@/pages/legal/Legal').then((module) => ({ default: module.TermsPage })),
 )
 const PrivacyPage = lazy(() =>
   import('@/pages/legal/Legal').then((module) => ({ default: module.PrivacyPage })),
 )
-// Public, no sign-in needed: Google Play links to it from the store listing.
-const DeleteAccountPage = lazy(() => import('@/pages/legal/DeleteAccount'))
 
 export function AppRoutes() {
   return (
@@ -71,6 +75,8 @@ export function AppRoutes() {
         />
         {/* The long-form marketing page, kept for sharing and for desktop. */}
         <Route path="/about" element={<LandingPage />} />
+        {/* Playful question flow that ends in matching events; open to guests. */}
+        <Route path="/plan" element={<PlanCrewDayPage />} />
         <Route
           path="/login"
           element={
@@ -90,6 +96,7 @@ export function AppRoutes() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
+        {/* Public on purpose: Google Play needs a deletion URL that works signed out. */}
         <Route path="/delete-account" element={<DeleteAccountPage />} />
 
         {/* Onboarding sits outside the app shell: no nav until the profile exists */}
@@ -134,6 +141,7 @@ export function AppRoutes() {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/settings/profile" element={<EditProfilePage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/purchases" element={<PurchaseHistoryPage />} />
         </Route>
 
         {/* Admin */}
@@ -156,6 +164,7 @@ export function AppRoutes() {
           <Route path="interests" element={<AdminInterestsPage />} />
           <Route path="requests" element={<AdminRequestsPage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="payments" element={<AdminPaymentsPage />} />
         </Route>
 
         {/* Legacy / convenience redirects */}

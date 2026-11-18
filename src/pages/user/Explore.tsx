@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { LinkButton } from '@/components/ui/Button'
 import { MapPin, Search, SlidersHorizontal, X } from 'lucide-react'
-import { EventRow } from '@/components/events/EventCard'
+import { EventRow, EventTile } from '@/components/events/EventCard'
 import { EventFilterBar } from '@/components/events/EventFilterBar'
 import { LocationBanner } from '@/components/layout/LocationBanner'
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/Feedback'
@@ -79,7 +80,13 @@ export default function ExplorePage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-ink-900">Discover Events</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold text-ink-900">Discover Events</h1>
+        <LinkButton to="/plan" size="sm" variant="outline" className="shrink-0 whitespace-nowrap">
+          <span className="sm:hidden">✨ Plan my day</span>
+          <span className="hidden sm:inline">✨ Plan my CrewDay</span>
+        </LinkButton>
+      </div>
 
       <div className="mt-4 flex gap-2">
         <form
@@ -99,7 +106,7 @@ export default function ExplorePage() {
             onChange={(event) => setSearchDraft(event.target.value)}
             placeholder="Search events..."
             aria-label="Search events"
-            className="h-12 w-full rounded-full bg-white pr-10 pl-11 text-[0.95rem] shadow-soft ring-1 ring-ink-100 outline-none placeholder:text-ink-400 focus:ring-2 focus:ring-brand-300"
+            className="h-12 w-full rounded-full bg-surface pr-10 pl-11 text-[0.95rem] shadow-soft ring-1 ring-ink-100 outline-none placeholder:text-ink-400 focus:ring-2 focus:ring-brand-300"
           />
           {searchDraft ? (
             <button
@@ -119,7 +126,7 @@ export default function ExplorePage() {
         <button
           type="button"
           onClick={() => setFiltersOpen(true)}
-          className="flex h-12 shrink-0 items-center gap-1.5 rounded-full bg-white px-4 text-sm font-semibold text-ink-700 shadow-soft ring-1 ring-ink-100 transition hover:text-brand-600"
+          className="flex h-12 shrink-0 items-center gap-1.5 rounded-full bg-surface px-4 text-sm font-semibold text-ink-700 shadow-soft ring-1 ring-ink-100 transition hover:text-brand-600"
         >
           {filters.city ? (
             <>
@@ -138,19 +145,24 @@ export default function ExplorePage() {
       <LocationBanner className="mt-5 mb-5" />
 
       {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }, (_, index) => (
-            <Skeleton key={index} className="h-30 w-full rounded-3xl" />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-1">
+          {Array.from({ length: 6 }, (_, index) => (
+            <Skeleton key={index} className="h-52 w-full rounded-2xl sm:h-30 sm:rounded-3xl" />
           ))}
         </div>
       ) : error ? (
         <ErrorState description={error} onRetry={reload} />
       ) : events.length ? (
         <>
-          <ul className="space-y-3">
-            {events.map((event) => (
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-1">
+            {events.map((event, index) => (
               <li key={event.id}>
-                <EventRow event={event} />
+                <div className="h-full sm:hidden">
+                  <EventTile event={event} eager={index < 6} />
+                </div>
+                <div className="hidden sm:block">
+                  <EventRow event={event} />
+                </div>
               </li>
             ))}
           </ul>
@@ -160,7 +172,7 @@ export default function ExplorePage() {
                 type="button"
                 onClick={loadMore}
                 disabled={loadingMore}
-                className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-soft ring-1 ring-ink-100 disabled:opacity-60"
+                className="rounded-full bg-surface px-6 py-3 text-sm font-semibold text-brand-600 shadow-soft ring-1 ring-ink-100 disabled:opacity-60"
               >
                 {loadingMore ? 'Loading…' : 'Load more events'}
               </button>

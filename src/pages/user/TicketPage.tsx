@@ -9,7 +9,7 @@ import { ConfirmDialog } from '@/components/ui/Modal'
 import { EmptyState, InlineAlert, LoadingScreen } from '@/components/ui/Feedback'
 import { Textarea } from '@/components/ui/Field'
 import { QRTicket } from '@/components/qr/QRTicket'
-import { PayNowButton } from '@/components/events/PayNowButton'
+import { PaymentPanel } from '@/components/payments/PaymentPanel'
 import { COLLECTIONS, db } from '@/firebase/config'
 import { useAuth } from '@/hooks/useAuth'
 import { useToast } from '@/hooks/useToast'
@@ -157,12 +157,6 @@ export default function TicketPage() {
     isUpcoming &&
     registration.registrationStatus !== 'cancelled' &&
     registration.attendanceStatus !== 'checked_in'
-  // The snapshot listener above flips this screen the moment the server
-  // confirms the payment, so the button needs no success callback.
-  const canPay =
-    isUpcoming &&
-    registration.registrationStatus === 'pending_payment' &&
-    event?.status !== 'cancelled'
 
   const onCancel = async () => {
     setCancelling(true)
@@ -199,13 +193,10 @@ export default function TicketPage() {
         </div>
       ) : null}
 
-      {canPay ? (
-        <div className="mb-5">
-          <PayNowButton registration={registration} />
-        </div>
-      ) : null}
-
       <QRTicket registration={registration} />
+
+      {/* Live with the subscription above: gone once the payment is confirmed. */}
+      <PaymentPanel registration={registration} />
 
       <div className="mt-6 space-y-3">
         <LinkButton to={`/events/${registration.eventId}`} variant="outline" fullWidth icon={<ExternalLink size={17} />}>

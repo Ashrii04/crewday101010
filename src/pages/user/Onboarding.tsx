@@ -168,7 +168,7 @@ export default function OnboardingPage() {
   const profileErrors = touched ? validateProfileFields({ name, phone, city }) : {}
 
   return (
-    <div className="min-h-dvh bg-ink-50">
+    <div className="min-h-dvh">
       <div className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-6">
         <div className="mb-6 flex items-center justify-between">
           <Logo />
@@ -231,7 +231,7 @@ export default function OnboardingPage() {
                                 'relative flex aspect-square flex-col items-center justify-center gap-2 rounded-3xl transition-all duration-200 active:scale-95',
                                 tints[tileIndex % tints.length],
                                 active
-                                  ? 'ring-2 ring-brand-500 ring-offset-2 ring-offset-[#fdf7fb]'
+                                  ? 'ring-2 ring-brand-500 ring-offset-2 ring-offset-white'
                                   : 'ring-1 ring-ink-100 hover:ring-brand-200',
                               )}
                             >
@@ -253,7 +253,7 @@ export default function OnboardingPage() {
                     </div>
                   ))}
 
-                  <div className="rounded-card border border-dashed border-ink-200 bg-white p-4">
+                  <div className="rounded-card border border-dashed border-ink-200 bg-surface p-4">
                     <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink-800">
                       <Sparkles size={16} className="text-brand-500" aria-hidden />
                       Add your own interest
@@ -352,7 +352,7 @@ export default function OnboardingPage() {
                         'rounded-card border-2 p-6 text-left transition',
                         active
                           ? 'border-brand-600 bg-brand-50 shadow-lift'
-                          : 'border-ink-200 bg-white hover:border-brand-300',
+                          : 'border-ink-200 bg-surface hover:border-brand-300',
                       )}
                     >
                       <span className="text-3xl" aria-hidden>
